@@ -6,6 +6,7 @@ This module handles all interactions with Google's Gemini 1.5 Flash API.
 
 import os
 import json
+import time
 from typing import Optional, List
 import google.generativeai as genai
 from dotenv import load_dotenv
@@ -34,153 +35,64 @@ class GeminiBackend:
 
     def generate_text(self, prompt: str) -> str:
         """
-        Generate text using Gemini API.
-
-        Args:
-            prompt: The input prompt
-
-        Returns:
-            Generated text response
+        Generate text using Gemini API with automatic Rate Limit handling.
         """
-        try:
-            response = self.model.generate_content(prompt)
-            return response.text
-        except Exception as e:
-            return f"Error generating text: {str(e)}"
+        max_retries = 3
+        wait_time = 25 # Wait 25 seconds if we hit a 429 Quota error
+
+        for attempt in range(max_retries):
+            try:
+                response = self.model.generate_content(prompt)
+                return response.text
+            except Exception as e:
+                error_str = str(e)
+                # Catch the 429 Quota limit specifically
+                if "429" in error_str and attempt < max_retries - 1:
+                    print(f"⚠️ API Rate limit hit! Pausing for {wait_time}s... (Attempt {attempt + 1}/{max_retries})")
+                    time.sleep(wait_time)
+                    continue # Try again after sleeping
+
+                return f"Error generating text: {error_str}"
 
     def analyze_pdf_content(self, pdf_text: str, query: str) -> str:
-        """
-        n or analysis request
-
-        Returns:
-            Analysis result
-        """
         prompt = f"""Please analyze the following PDF content and answer the query.
-
-PDF Content:
-{pdf_text}
-
-Query: {query}
-
-Please provide a comprehensive and clear response."""
-
+PDF Content:\n{pdf_text}\n\nQuery: {query}\n\nPlease provide a comprehensive and clear response."""
         return self.generate_text(prompt)
 
     def summarize_pdf(self, pdf_text: str) -> str:
-        """
-        Summarize PDF content using Gemini.
-
-        Args:
-            pdf_text: The extracted text from PDF
-
-        Returns:
-            Summary of the PDF
-        """
-        prompt = f"""Please provide a concise summary of the following PDF content:
-
-{pdf_text}
-
-Provide a clear, structured summary highlighting the key points."""
-
+        prompt = f"""Please provide a concise summary of the following PDF content:\n{pdf_text}\nProvide a clear, structured summary highlighting the key points."""
         return self.generate_text(prompt)
 
     def compare_pdfs(self, pdf1_text: str, pdf2_text: str, query: Optional[str] = None) -> str:
-        """
-        Compare two PDF documents.
-
-        Args:
-            pdf1_text: Text from first PDF
-            pdf2_text: Text from second PDF
-            query: Optional specific comparison query
-
-        Returns:
-            Comparison analysis
-        """
         if query:
-            prompt = f"""Compare these two PDF documents with focus on: {query}
-
-Document 1:
-{pdf1_text}
-
-Document 2:
-{pdf2_text}
-
-Please provide a detailed comparison."""
+            prompt = f"Compare these two PDF documents with focus on: {query}\n\nDocument 1:\n{pdf1_text}\n\nDocument 2:\n{pdf2_text}\n\nPlease provide a detailed comparison."
         else:
-            prompt = f"""Compare these two PDF documents and highlight their differences and similarities:
-
-Document 1:
-{pdf1_text}
-
-Document 2:
-{pdf2_text}
-
-Please provide a detailed comparison."""
-
+            prompt = f"Compare these two PDF documents and highlight their differences and similarities:\n\nDocument 1:\n{pdf1_text}\n\nDocument 2:\n{pdf2_text}\n\nPlease provide a detailed comparison."
         return self.generate_text(prompt)
 
     def extract_key_information(self, pdf_text: str, info_type: str) -> str:
-        """
-        Extract specific information from PDF.
-
-        Args:
-            pdf_text: The extracted text from PDF
-            info_type: Type of information to extract (e.g., 'dates', 'names', 'amounts')
-
-        Returns:
-            Extracted information
-        """
-        prompt = f"""Extract all {info_type} from the following PDF content:
-
-{pdf_text}
-
-Please list them in a structured format."""
-
+        prompt = f"Extract all {info_type} from the following PDF content:\n{pdf_text}\n\nPlease list them in a structured format."
         return self.generate_text(prompt)
 
     def start_chat_session(self):
-        """Start a multi-turn chat session."""
         self.chat_history = []
         self.chat = self.model.start_chat(history=self.chat_history)
 
     def send_chat_message(self, message: str) -> str:
-        """
-        Send a message in the chat session.
-
-        Args:
-            message: The message to send
-
-        Returns:
-            Chat response
-        """
         try:
             if not hasattr(self, 'chat'):
                 self.start_chat_session()
-
             response = self.chat.send_message(message)
             return response.text
         except Exception as e:
             return f"Error in chat: {str(e)}"
 
     def reset_chat(self):
-        """Reset the chat history."""
         self.chat_history = []
         if hasattr(self, 'chat'):
             delattr(self, 'chat')
 
     def check_missing_components(self, pdf_text: str, pdf_name: str) -> dict:
-        """
-        Check if the PDF has any missing or incomplete components using strict academic audit.
-        Optimized for free tier API quota.
-
-        Args:
-            pdf_text: The extracted text from PDF
-            pdf_name: The name of the PDF file
-
-        Returns:
-            Dictionary with analysis results in JSON format
-        """
-        # Optimized prompt - concise but complete validation rules
         master_prompt = f"""Auditor academic. Validează "Fișa Disciplinei" și returnează JSON:
 
 VALIDĂRI MATEMATICE - verifică acestea:
@@ -221,37 +133,72 @@ JSON doar:"""
 
         try:
             result = self.generate_text(master_prompt)
+            try:
+                analysis_json = json.loads(result)
+                return {"success": True, "analysis": analysis_json, "raw_response": result}
+            except json.JSONDecodeError:
+                return {"success": True, "analysis": None, "raw_response": result, "note": "Response could not be parsed as JSON."}
+        except Exception as e:
+            return {"success": False, "error": str(e), "analysis": None}
 
+    def analyze_and_recommend_competencies(self, pdf_text: str, pdf_name: str) -> dict:
+        """
+        Analyzes the competencies in a Fișa Disciplinei and recommends improvements.
+        Returns the result in JSON format.
+        """
+        master_prompt = f"""Ești un expert în design curricular universitar.
+Sarcina ta este să analizezi "Fișa Disciplinei" de mai jos și să evaluezi competențele profesionale și transversale declarate, apoi să faci recomandări.
+
+CERINȚE DE BAZĂ PENTRU ANALIZĂ:
+1. Identifică numele disciplinei/materiei.
+2. Extrage competențele profesionale și transversale actuale (sau constată lipsa lor).
+3. Evaluează relevanța: Sunt aceste competențe potrivite pentru numele și conținutul materiei?
+4. Formulaază recomandări: Propune 2-3 competențe profesionale NOI sau îmbunătățite și 1-2 competențe transversale care s-ar potrivi mai bine cu materia, folosind verbe de acțiune clare (ex: a proiecta, a analiza, a implementa).
+
+Returnează DOAR un obiect JSON valid, respectând strict această structură:
+{{
+  "nume_materie": "...",
+  "competente_actuale_extrase": [
+    "..."
+  ],
+  "evaluare_relevanta": "Scurtă analiză a competențelor actuale (1-2 propoziții)...",
+  "recomandari_profesionale": [
+    "Recomandare 1",
+    "Recomandare 2"
+  ],
+  "recomandari_transversale": [
+    "Recomandare 1"
+  ]
+}}
+
+PDF: {pdf_name}
+TEXT: {pdf_text[:5000]}
+
+JSON doar:"""
+
+        try:
+            result = self.generate_text(master_prompt)
             # Try to parse the JSON response
             try:
                 import json
-                analysis_json = json.loads(result)
-                return {
-                    "success": True,
-                    "analysis": analysis_json,
-                    "raw_response": result
-                }
+                # Clean up potential markdown formatting from the response
+                cleaned_result = result.strip()
+                if cleaned_result.startswith('```json'):
+                    cleaned_result = cleaned_result[7:]
+                if cleaned_result.endswith('```'):
+                    cleaned_result = cleaned_result[:-3]
+
+                analysis_json = json.loads(cleaned_result.strip())
+                return {"success": True, "analysis": analysis_json, "raw_response": result}
             except json.JSONDecodeError:
-                # If JSON parsing fails, return the raw response
-                return {
-                    "success": True,
-                    "analysis": None,
-                    "raw_response": result,
-                    "note": "Response could not be parsed as JSON. See raw_response."
-                }
+                return {"success": True, "analysis": None, "raw_response": result,
+                        "note": "Response could not be parsed as JSON."}
         except Exception as e:
-            return {
-                "success": False,
-                "error": str(e),
-                "analysis": None
-            }
+            return {"success": False, "error": str(e), "analysis": None}
 
 
 # Global instance
 gemini_backend = GeminiBackend()
 
-
 def get_gemini_backend() -> GeminiBackend:
-    """Get the global Gemini backend instance."""
     return gemini_backend
-

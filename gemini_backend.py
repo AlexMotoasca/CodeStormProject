@@ -20,8 +20,8 @@ if not GEMINI_API_KEY:
 
 genai.configure(api_key=GEMINI_API_KEY)
 
-# Use Gemini 1.5 Flash model
-MODEL_NAME = "gemini-1.5-flash"
+# Use Gemini 2.5 Flash model (available and fast)
+MODEL_NAME = "gemini-2.5-flash"
 
 
 class GeminiBackend:
@@ -50,11 +50,7 @@ class GeminiBackend:
 
     def analyze_pdf_content(self, pdf_text: str, query: str) -> str:
         """
-        Analyze PDF content using Gemini.
-
-        Args:
-            pdf_text: The extracted text from PDF
-            query: The question or analysis request
+        n or analysis request
 
         Returns:
             Analysis result

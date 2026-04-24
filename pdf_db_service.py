@@ -12,13 +12,22 @@ import re
 
 from dotenv import load_dotenv
 import fitz
-import psycopg2
+
+# psycopg2 is optional; provide a filesystem fallback when not available
+try:
+    import psycopg2
+    import psycopg2.extras
+    HAS_PG = True
+except Exception:
+    psycopg2 = None
+    HAS_PG = False
 
 
 load_dotenv()
 
 PREVIEW_DIR = Path(".files") / "db_pdf_previews"
 BLACK_TEXT_COLOR = (0.0, 0.0, 0.0)
+FALLBACK_DB_DIR = Path(".files") / "pdf_store"
 
 
 @dataclass
@@ -41,44 +50,65 @@ def _db_config() -> dict:
 
 
 def list_pdf_names() -> list[str]:
-    conn = psycopg2.connect(**_db_config())
-    cursor = conn.cursor()
-    try:
-        cursor.execute("SELECT DISTINCT nume_fisier FROM documente_scoala ORDER BY nume_fisier")
-        return [row[0] for row in cursor.fetchall()]
-    finally:
-        cursor.close()
-        conn.close()
+    if HAS_PG:
+        conn = psycopg2.connect(**_db_config())
+        cursor = conn.cursor()
+        try:
+            cursor.execute("SELECT DISTINCT nume_fisier FROM documente_scoala ORDER BY nume_fisier")
+            return [row[0] for row in cursor.fetchall()]
+        finally:
+            cursor.close()
+            conn.close()
+    else:
+        FALLBACK_DB_DIR.mkdir(parents=True, exist_ok=True)
+        return [p.name for p in sorted(FALLBACK_DB_DIR.glob("*.pdf"))]
 
 
 def get_pdf_bytes(pdf_name: str) -> bytes | None:
-    conn = psycopg2.connect(**_db_config())
-    cursor = conn.cursor()
-    try:
-        cursor.execute(
-            "SELECT fisier_pdf FROM documente_scoala WHERE nume_fisier = %s LIMIT 1",
-            (pdf_name,),
-        )
-        row = cursor.fetchone()
-        return bytes(row[0]) if row and row[0] is not None else None
-    finally:
-        cursor.close()
-        conn.close()
+    if HAS_PG:
+        conn = psycopg2.connect(**_db_config())
+        cursor = conn.cursor()
+        try:
+            cursor.execute(
+                "SELECT fisier_pdf FROM documente_scoala WHERE nume_fisier = %s LIMIT 1",
+                (pdf_name,),
+            )
+            row = cursor.fetchone()
+            return bytes(row[0]) if row and row[0] is not None else None
+        finally:
+            cursor.close()
+            conn.close()
+    else:
+        FALLBACK_DB_DIR.mkdir(parents=True, exist_ok=True)
+        file_path = FALLBACK_DB_DIR / pdf_name
+        if not file_path.exists():
+            # also try with .pdf extension
+            file_path = FALLBACK_DB_DIR / f"{pdf_name}.pdf"
+            if not file_path.exists():
+                return None
+        return file_path.read_bytes()
 
 
 def save_pdf_bytes(pdf_name: str, pdf_bytes: bytes) -> int:
-    conn = psycopg2.connect(**_db_config())
-    cursor = conn.cursor()
-    try:
-        cursor.execute(
-            "UPDATE documente_scoala SET fisier_pdf = %s WHERE nume_fisier = %s",
-            (psycopg2.Binary(pdf_bytes), pdf_name),
-        )
-        conn.commit()
-        return cursor.rowcount
-    finally:
-        cursor.close()
-        conn.close()
+    if HAS_PG:
+        conn = psycopg2.connect(**_db_config())
+        cursor = conn.cursor()
+        try:
+            cursor.execute(
+                "UPDATE documente_scoala SET fisier_pdf = %s WHERE nume_fisier = %s",
+                (psycopg2.Binary(pdf_bytes), pdf_name),
+            )
+            conn.commit()
+            return cursor.rowcount
+        finally:
+            cursor.close()
+            conn.close()
+    else:
+        FALLBACK_DB_DIR.mkdir(parents=True, exist_ok=True)
+        # save to filename with .pdf extension
+        file_path = FALLBACK_DB_DIR / (pdf_name if pdf_name.lower().endswith('.pdf') else f"{pdf_name}.pdf")
+        file_path.write_bytes(pdf_bytes)
+        return 1
 
 
 def extract_text_and_layout(pdf_bytes: bytes) -> tuple[str, list[SpanTemplate]]:
@@ -195,4 +225,3 @@ def write_preview_pdf(pdf_name: str, pdf_bytes: bytes, suffix: str = "") -> str:
     file_path = PREVIEW_DIR / f"{safe_name}{suffix}.pdf"
     file_path.write_bytes(pdf_bytes)
     return str(file_path)
-

@@ -1,13 +1,8 @@
 import chainlit as cl
-<<<<<<< Updated upstream
-import PyPDF2
-=======
->>>>>>> Stashed changes
 from typing import List
 from chainlit.input_widget import Select
 from gemini_backend import get_gemini_backend
 from pdf_parser import get_pdf_parser
-<<<<<<< Updated upstream
 from pdf_db_service import (
     list_pdf_names,
     get_pdf_bytes,
@@ -16,36 +11,12 @@ from pdf_db_service import (
     regenerate_pdf_with_layout,
     write_preview_pdf,
 )
-=======
 from queries import compare_fd_pi, save_documents_to_files
->>>>>>> Stashed changes
 
 # Store uploaded PDFs in session
-pdf_documents = []
+pdf_documents: List[dict] = []
 
 
-<<<<<<< Updated upstream
-async def start():
-    """Initialize the chat session and display the PDF import interface."""
-    await cl.Message(
-        content="Welcome! Please upload 1-2 PDF documents to get started. "
-                "Use the file upload button below to select your PDF files.\n\n"
-                "Features:\n"
-                "✅ Auto-detect regular and scanned PDFs\n"
-                "✅ Parse and extract text\n"
-                "✅ Create output.txt with parsed content\n"
-                "✅ AI-powered analysis with Gemini\n\n"
-                "Database tools:\n"
-                "- Click 'Alege PDF din baza de date' to open a dropdown with all PostgreSQL PDFs",
-        actions=[
-            cl.Action(
-                name="open_db_dropdown",
-                value="open",
-                description="Alege PDF din baza de date",
-                payload={"source": "welcome"},
-            )
-        ],
-=======
 def _is_pdf_element(el) -> bool:
     return hasattr(el, "name") and isinstance(el.name, str) and el.name.lower().endswith(".pdf")
 
@@ -60,10 +31,10 @@ async def start():
             "2) Planul de învățământ (PI)\n\n"
             "After upload, I’ll parse both, save them to `fd.txt` and `pi.txt`, and you can run the compare."
         )
->>>>>>> Stashed changes
     ).send()
 
 
+@cl.on_message
 async def handle_message(message: cl.Message):
     """Handle incoming messages and process uploaded files."""
     global pdf_documents
@@ -71,52 +42,10 @@ async def handle_message(message: cl.Message):
     gemini = get_gemini_backend()
     parser = get_pdf_parser()
 
-<<<<<<< Updated upstream
-    pending_edit = cl.user_session.get("pending_db_edit")
-    if pending_edit and not message.elements:
-        user_text = message.content if isinstance(message.content, str) else ""
-        command = user_text.strip()
-
-        if not command:
-            await cl.Message(content="⚠️ Trimite textul editat sau `/cancel`.").send()
-            return
-
-        if command.lower() == "/cancel":
-            cl.user_session.set("pending_db_edit", None)
-            await cl.Message(content="✅ Editarea din baza de date a fost anulata.").send()
-            return
-
-        try:
-            original_pdf = pending_edit["original_pdf"]
-            templates = pending_edit["templates"]
-            pdf_name = pending_edit["pdf_name"]
-
-            edited_pdf = regenerate_pdf_with_layout(original_pdf, user_text, templates)
-            updated_rows = save_pdf_bytes(pdf_name, edited_pdf)
-
-            cl.user_session.set("pending_db_edit", None)
-
-            preview_path = write_preview_pdf(pdf_name, edited_pdf, suffix="_updated")
-            await cl.Message(
-                content=(
-                    f"✅ PDF actualizat in baza de date: **{pdf_name}**\n"
-                    f"Randuri actualizate: {updated_rows}"
-                ),
-                elements=[cl.Pdf(name=f"{pdf_name} (updated)", path=preview_path, display="inline")],
-            ).send()
-        except Exception as exc:
-            await cl.Message(content=f"❌ Eroare la salvare PDF: {str(exc)}").send()
-
-        return
-
-    # Check if files were uploaded
-    if message.elements:
-        pdf_files = [file for file in message.elements if file.name.endswith('.pdf')]
-=======
+    # If no file elements, ask user to upload
     if not message.elements:
-        await cl.Message(content="Please upload 2 PDF documents (FD then PI).").send()
+        await cl.Message(content="Please upload 2 PDF documents (FD then PI) in one message.").send()
         return
->>>>>>> Stashed changes
 
     pdf_files = [el for el in message.elements if _is_pdf_element(el)]
 
@@ -130,9 +59,9 @@ async def handle_message(message: cl.Message):
     pdf_documents = []
 
     async def _parse_and_store(file_el, role: str):
-        pdf_path = file_el.path
+        pdf_path = getattr(file_el, 'path', None) or getattr(file_el, 'local_path', None) or file_el.name
         result = parser.parse_pdf(pdf_path)
-        if not result.get("success"):
+        if not result or not result.get("success"):
             raise RuntimeError(result.get("error") or "Unknown parse error")
 
         doc = {
@@ -169,67 +98,10 @@ async def handle_message(message: cl.Message):
             await cl.Message(
                 content=(
                     "💾 Saved parsed text files:\n"
-                    f"- fd.txt ({save_res['fd_size']} chars)\n"
-                    f"- pi.txt ({save_res['pi_size']} chars)"
+                    f"- fd.txt ({save_res.get('fd_size',0)} chars)\n"
+                    f"- pi.txt ({save_res.get('pi_size',0)} chars)"
                 )
             ).send()
-<<<<<<< Updated upstream
-    else:
-        # Handle text messages with Gemini
-        if pdf_documents:
-            content = message.content if isinstance(message.content, str) else ""
-            user_input = content.strip().lower()
-
-            # Summarize command
-            if "summarize" in user_input or "summary" in user_input:
-                await cl.Message(content="📝 Generating summary...").send()
-                for i, pdf in enumerate(pdf_documents, 1):
-                    summary = gemini.summarize_pdf(pdf['full_text'])
-                    await cl.Message(
-                        content=f"**Summary of {pdf['name']}:**\n\n{summary}"
-                    ).send()
-
-            # Compare documents
-            elif "compare" in user_input and len(pdf_documents) == 2:
-                await cl.Message(content="🔍 Comparing documents...").send()
-                comparison = gemini.compare_pdfs(
-                    pdf_documents[0]['full_text'],
-                    pdf_documents[1]['full_text']
-                )
-                await cl.Message(
-                    content=f"**Comparison Result:**\n\n{comparison}"
-                ).send()
-
-            # General questions
-            else:
-                await cl.Message(content="🤔 Analyzing documents...").send()
-
-                # Combine PDFs for analysis
-                combined_text = "\n\n---\n\n".join([
-                    f"Document: {pdf['name']}\n{pdf['full_text']}"
-                    for pdf in pdf_documents
-                ])
-
-                analysis = gemini.analyze_pdf_content(combined_text, content)
-                await cl.Message(
-                    content=f"**Analysis:**\n\n{analysis}"
-                ).send()
-        else:
-            await cl.Message(
-                content=(
-                    "Please upload PDF documents using the file upload feature, or use "
-                    "the button 'Lista PDF-uri din baza de date'."
-                ),
-                actions=[
-                    cl.Action(
-                        name="open_db_dropdown",
-                        value="open",
-                        description="Alege PDF din baza de date",
-                        payload={"source": "empty_state"},
-                    )
-                ],
-            ).send()
-=======
         else:
             await cl.Message(content=f"⚠️ Could not save fd.txt/pi.txt: {save_res.get('error')}").send()
 
@@ -253,6 +125,12 @@ async def handle_message(message: cl.Message):
                 description="Compare FD with PI",
                 payload={"doc1_idx": 0, "doc2_idx": 1},
             ),
+            cl.Action(
+                name="check_components",
+                value=fd_doc["name"],
+                description="Check FD for missing components",
+                payload={"pdf_name": fd_doc["name"]},
+            ),
         ]
 
         await cl.Message(
@@ -266,7 +144,6 @@ async def handle_message(message: cl.Message):
     except Exception as e:
         await cl.Message(content=f"❌ Error parsing PDFs: {str(e)}").send()
         return
->>>>>>> Stashed changes
 
 
 async def _send_db_pdf_actions(pdf_name: str):
@@ -430,23 +307,23 @@ async def verify_parser_action(action: cl.Action):
         # Re-parse the PDF
         parse_result = parser.parse_pdf(matching_pdf['path'])
 
-        if parse_result['success'] and parse_result['text']:
+        if parse_result and parse_result.get('success') and parse_result.get('text'):
             # Save directly to output.txt (just the raw text)
             with open("output.txt", 'w', encoding='utf-8') as f:
-                f.write(parse_result['text'])
+                f.write(parse_result.get('text') or "")
 
             # Send success message
-            msg = f"""✅ Parser Verification Complete!
-
-File: {matching_pdf['name']}
-Pages: {parse_result['page_count']}
-Type: {'Scanned (OCR)' if parse_result['is_scanned'] else 'Regular Text'}
-
-✅ output.txt created with {len(parse_result['text'])} characters"""
+            msg = (
+                f"✅ Parser Verification Complete!\n\n"
+                f"File: {matching_pdf['name']}\n"
+                f"Pages: {parse_result.get('page_count')}\n"
+                f"Type: {'Scanned (OCR)' if parse_result.get('is_scanned') else 'Regular Text'}\n\n"
+                f"✅ output.txt created with {len(parse_result.get('text') or '')} characters"
+            )
 
             await cl.Message(content=msg).send()
         else:
-            await cl.Message(content=f"❌ Failed to parse PDF: {parse_result['error']}").send()
+            await cl.Message(content=f"❌ Failed to parse PDF: {parse_result.get('error') if parse_result else 'No result'}").send()
 
     except Exception as e:
         print(f"ERROR in verify_parser_action: {str(e)}")
@@ -485,7 +362,7 @@ async def check_components_action(action: cl.Action):
         # Check for missing components using Gemini with master prompt
         result = gemini.check_missing_components(matching_pdf['full_text'], pdf_name)
 
-        if result['success']:
+        if result.get('success'):
             analysis = result.get('analysis')
 
             if isinstance(analysis, dict):
@@ -498,13 +375,7 @@ async def check_components_action(action: cl.Action):
 
                 # Build formatted message
                 status_icon = "✅" if status == "VALID" else "❌"
-                msg = f"""📊 **Academic Audit Results**
-
-**File:** {pdf_name}
-
-**Status:** {status_icon} {status}
-
-"""
+                msg = f"📊 **Academic Audit Results**\n\n**File:** {pdf_name}\n\n**Status:** {status_icon} {status}\n\n"
 
                 # Math Errors
                 if math_errors:
@@ -550,12 +421,7 @@ async def check_components_action(action: cl.Action):
                 await cl.Message(content=msg).send()
             else:
                 # Raw response (couldn't parse as JSON)
-                msg = f"""📊 **Validation Analysis**
-
-**File:** {pdf_name}
-
-**Raw Analysis:**
-{result.get('raw_response', 'No response')}"""
+                msg = f"📊 **Validation Analysis**\n\n**File:** {pdf_name}\n\n**Raw Analysis:**\n{result.get('raw_response', 'No response')}"
                 await cl.Message(content=msg).send()
         else:
             await cl.Message(content=f"❌ Analysis failed: {result.get('error', 'Unknown error')}").send()
@@ -591,17 +457,15 @@ async def compare_fd_pi_action(action: cl.Action):
         # Save to files
         save_result = save_documents_to_files(fd_text, pi_text)
 
-        if save_result['success']:
+        if save_result.get('success'):
             await cl.Message(
-                content=f"✅ Documents saved:\n"
-                        f"- fd.txt ({save_result['fd_size']} chars)\n"
-                        f"- pi.txt ({save_result['pi_size']} chars)"
+                content=f"✅ Documents saved:\n- fd.txt ({save_result.get('fd_size',0)} chars)\n- pi.txt ({save_result.get('pi_size',0)} chars)"
             ).send()
 
         # Compare documents using Gemini
         comparison_result = compare_fd_pi(fd_text, pi_text)
 
-        if comparison_result['success']:
+        if comparison_result.get('success'):
             # Display the formatted text response directly
             report = comparison_result.get('analysis', 'No response')
             await cl.Message(content=report).send()

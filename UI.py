@@ -93,13 +93,20 @@ async def handle_message(message: cl.Message):
                     description="Verify parser and create output.txt",
                     payload={"pdf_name": file.name}
                 )
+
+                # Add button to check for missing components
+                check_components_action = cl.Action(
+                    name="check_components",
+                    value=file.name,
+                    description="Check for missing components",
+                    payload={"pdf_name": file.name}
+                )
+
                 await cl.Message(
-                    content=f"🔍 **Parser Verification**\n\n"
-                            f"Click the button below to:\n"
-                            f"✅ Verify parser functionality\n"
-                            f"✅ Create output.txt with parsed text\n\n"
-                            f"**PDF:** {file.name}",
-                    actions=[verify_action]
+                    content=f"🔍 **Parser Actions**\n\n"
+                            f"**PDF:** {file.name}\n\n"
+                            f"Click buttons below:",
+                    actions=[verify_action, check_components_action]
                 ).send()
             except Exception as e:
                 await cl.Message(
@@ -222,6 +229,116 @@ Type: {'Scanned (OCR)' if parse_result['is_scanned'] else 'Regular Text'}
         await cl.Message(content=f"❌ Error: {str(e)}").send()
 
 
+@cl.action_callback("check_components")
+async def check_components_action(action: cl.Action):
+    """Handle check missing components button click."""
+    gemini = get_gemini_backend()
+
+    try:
+        # Get pdf_name from payload
+        pdf_name = action.payload.get("pdf_name") if action.payload else None
+
+        if not pdf_name:
+            await cl.Message(content="❌ Error: PDF name not found").send()
+            return
+
+        # Find the matching PDF
+        matching_pdf = next((pdf for pdf in pdf_documents if pdf['name'] == pdf_name), None)
+
+        if not matching_pdf:
+            await cl.Message(content=f"❌ PDF not found: {pdf_name}").send()
+            return
+
+        if not matching_pdf['full_text']:
+            await cl.Message(content="❌ No text available for analysis").send()
+            return
+
+        # Show loading message
+        await cl.Message(content="🔍 Analyzing PDF for missing components and validation...").send()
+
+        # Check for missing components using Gemini with master prompt
+        result = gemini.check_missing_components(matching_pdf['full_text'], pdf_name)
+
+        if result['success']:
+            analysis = result.get('analysis')
+
+            if isinstance(analysis, dict):
+                # Parse JSON response
+                status = analysis.get('status', 'UNKNOWN')
+                math_errors = analysis.get('math_errors', [])
+                structural_errors = analysis.get('structural_errors', [])
+                missing_components = analysis.get('missing_components', [])
+                general_warnings = analysis.get('general_warnings', [])
+
+                # Build formatted message
+                status_icon = "✅" if status == "VALID" else "❌"
+                msg = f"""📊 **Academic Audit Results**
+
+**File:** {pdf_name}
+
+**Status:** {status_icon} {status}
+
+"""
+
+                # Math Errors
+                if math_errors:
+                    msg += "**❌ Mathematical Errors Found:**\n"
+                    for error in math_errors:
+                        msg += f"\n• **{error.get('rule', 'Unknown Rule')}**\n"
+                        msg += f"  - Expected: {error.get('expected', 'N/A')}\n"
+                        msg += f"  - Found: {error.get('found', 'N/A')}\n"
+                        msg += f"  - Details: {error.get('details', 'N/A')}\n"
+                else:
+                    msg += "✅ **No mathematical errors found**\n"
+
+                msg += "\n"
+
+                # Structural Errors
+                if structural_errors:
+                    msg += "**⚠️ Structural Issues:**\n"
+                    for error in structural_errors:
+                        msg += f"\n• **{error.get('section', 'Unknown Section')}**\n"
+                        msg += f"  - Issue: {error.get('issue', 'N/A')}\n"
+                        msg += f"  - Details: {error.get('details', 'N/A')}\n"
+                else:
+                    msg += "✅ **Document structure is correct**\n"
+
+                msg += "\n"
+
+                # Missing Components
+                if missing_components:
+                    msg += "**📋 Missing Components:**\n"
+                    for component in missing_components:
+                        msg += f"• {component}\n"
+                else:
+                    msg += "✅ **All required components are present**\n"
+
+                msg += "\n"
+
+                # General Warnings
+                if general_warnings:
+                    msg += "**⚠️ General Warnings:**\n"
+                    for warning in general_warnings:
+                        msg += f"• {warning}\n"
+
+                await cl.Message(content=msg).send()
+            else:
+                # Raw response (couldn't parse as JSON)
+                msg = f"""📊 **Validation Analysis**
+
+**File:** {pdf_name}
+
+**Raw Analysis:**
+{result.get('raw_response', 'No response')}"""
+                await cl.Message(content=msg).send()
+        else:
+            await cl.Message(content=f"❌ Analysis failed: {result.get('error', 'Unknown error')}").send()
+
+    except Exception as e:
+        print(f"ERROR in check_components_action: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        await cl.Message(content=f"❌ Error: {str(e)}").send()
 def get_loaded_pdfs() -> List[dict]:
     """Retrieve the currently loaded PDF documents."""
     return pdf_documents

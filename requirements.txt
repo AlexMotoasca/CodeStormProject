@@ -1,0 +1,5 @@
+chainlit==0.7.700
+PyPDF2==3.0.1
+python-dotenv==1.0.0
+google-generativeai==0.3.0
+

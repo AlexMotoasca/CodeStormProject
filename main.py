@@ -1,16 +1,28 @@
-# This is a sample Python script.
+"""
+Main entry point for the PDF Import UI application using Chainlit.
 
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
+Run this file with: chainlit run main.py
+"""
+
+import chainlit as cl
+from UI import handle_message, get_loaded_pdfs, clear_pdfs
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
+@cl.on_chat_start
+async def start():
+    """Initialize the chat session and display the PDF import interface."""
+    await cl.Message(
+        content="Welcome! Please upload 2 PDF documents to get started. "
+                "Use the file upload button below to select your PDF files.",
+    ).send()
 
 
-# Press the green button in the gutter to run the script.
+@cl.on_message
+async def main_handler(message: cl.Message):
+    """Handle incoming messages and process uploaded files."""
+    await handle_message(message)
+
+
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    print("Starting Chainlit UI...")
+    print("Run: chainlit run main.py")

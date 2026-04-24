@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CopilotDiffPersistence">
+    <option name="pendingDiffs">
+      <map>
+        <entry key="$PROJECT_DIR$/README.md">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/README.md" />
+              <option name="updatedContent" value="# PDF Import UI with Chainlit&#10;&#10;A user-friendly Chainlit-based application for importing and processing 2 PDF documents.&#10;&#10;## Features&#10;&#10;- **PDF Upload**: Easy file upload interface for importing up to 2 PDF documents&#10;- **File Validation**: Automatic validation to ensure only PDF files are accepted&#10;- **Document Preview**: Displays page count and text preview from the first page&#10;- **Session Management**: Stores uploaded documents in the session for processing&#10;- **User Feedback**: Real-time feedback on upload status and document information&#10;&#10;## Installation&#10;&#10;1. **Clone or download the project**&#10;&#10;2. **Install dependencies**:&#10;   ```bash&#10;   pip install -r requirements.txt&#10;   ```&#10;&#10;3. **Run the application**:&#10;   ```bash&#10;   chainlit run main.py&#10;   ```&#10;&#10;The application will start on `http://localhost:8000` by default.&#10;&#10;## Usage&#10;&#10;1. Open the application in your web browser&#10;2. Click the file upload button or drag and drop PDF files&#10;3. Upload up to 2 PDF documents&#10;4. The application will:&#10;   - Validate the files&#10;   - Extract metadata (page count, preview text)&#10;   - Display a summary of all imported documents&#10;&#10;## File Structure&#10;&#10;- `main.py` - Entry point for the application&#10;- `UI.py` - Chainlit UI implementation with PDF handling logic&#10;- `requirements.txt` - Python package dependencies&#10;&#10;## API Functions&#10;&#10;### `get_loaded_pdfs()`&#10;Returns a list of loaded PDF documents with their metadata:&#10;```python&#10;[&#10;    {&#10;        'name': 'document.pdf',&#10;        'path': '/path/to/document.pdf',&#10;        'pages': 10,&#10;        'preview': 'First 200 characters of text...'&#10;    }&#10;]&#10;```&#10;&#10;### `clear_pdfs()`&#10;Clears all loaded PDF documents from memory.&#10;&#10;## Requirements&#10;&#10;- Python 3.8+&#10;- chainlit&#10;- PyPDF2&#10;&#10;## Notes&#10;&#10;- Maximum of 2 PDF documents can be imported at once&#10;- Only PDF files are accepted&#10;- The preview text shows the first 200 characters from the first page&#10;" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

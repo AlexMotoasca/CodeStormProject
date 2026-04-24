@@ -168,6 +168,84 @@ Please list them in a structured format."""
         if hasattr(self, 'chat'):
             delattr(self, 'chat')
 
+    def check_missing_components(self, pdf_text: str, pdf_name: str) -> dict:
+        """
+        Check if the PDF has any missing or incomplete components using strict academic audit.
+        Optimized for free tier API quota.
+
+        Args:
+            pdf_text: The extracted text from PDF
+            pdf_name: The name of the PDF file
+
+        Returns:
+            Dictionary with analysis results in JSON format
+        """
+        # Optimized prompt - concise but complete validation rules
+        master_prompt = f"""Auditor academic. Validează "Fișa Disciplinei" și returnează JSON:
+
+VALIDĂRI MATEMATICE - verifică acestea:
+1. Ore/săptămână = Curs + Seminar/Lab
+2. Ore total sem = Curs + Seminar/Lab  
+3. Ore total = Ore/săpt × 14
+4. Ore individuale = Suma (Manual + Doc + Prep + Tutoriat + Exam + Altele)
+5. Total sem = Ore sem + Ore individ
+6. Credite = Total sem / 25 (max 30 ECTS)
+7. Ore Curs (tabel 8.1) = Curs (sec 3.5)
+8. Ore Seminar (tabel 8.2) = Seminar (sec 3.6)
+9. Pondere eval = 100%
+
+STRUCTURĂ OBLIGATORIE:
+- Date program (Instituție, Facultate, Program)
+- Date disciplină (Denumire, Titulari, An, Semestru)
+- Timp estimat (3.1-3.9)
+- Precondiții, Condiții (5.1, 5.2)
+- Competențe (Prof + Transversale)
+- Obiective (7.1, 7.2)
+- Conținuturi (8.1 Curs, 8.2 Seminar, Bibliografie)
+- Evaluare (Criterii, metode, pondere, standard minim)
+- Semnături finale
+
+Returnează DOAR valid JSON:
+{{
+  "status": "VALID|INVALID",
+  "math_errors": [{{"rule": "...", "expected": "...", "found": "...", "details": "..."}}],
+  "structural_errors": [{{"section": "...", "issue": "...", "details": "..."}}],
+  "missing_components": ["..."],
+  "general_warnings": ["..."]
+}}
+
+PDF: {pdf_name}
+TEXT: {pdf_text[:4000]}
+
+JSON doar:"""
+
+        try:
+            result = self.generate_text(master_prompt)
+
+            # Try to parse the JSON response
+            try:
+                import json
+                analysis_json = json.loads(result)
+                return {
+                    "success": True,
+                    "analysis": analysis_json,
+                    "raw_response": result
+                }
+            except json.JSONDecodeError:
+                # If JSON parsing fails, return the raw response
+                return {
+                    "success": True,
+                    "analysis": None,
+                    "raw_response": result,
+                    "note": "Response could not be parsed as JSON. See raw_response."
+                }
+        except Exception as e:
+            return {
+                "success": False,
+                "error": str(e),
+                "analysis": None
+            }
+
 
 # Global instance
 gemini_backend = GeminiBackend()

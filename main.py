@@ -5,16 +5,13 @@ Run this file with: chainlit run main.py
 """
 
 import chainlit as cl
-from UI import handle_message, get_loaded_pdfs, clear_pdfs
+from UI import start as ui_start, handle_message
 
 
 @cl.on_chat_start
 async def start():
     """Initialize the chat session and display the PDF import interface."""
-    await cl.Message(
-        content="Welcome! Please upload 2 PDF documents to get started. "
-                "Use the file upload button below to select your PDF files.",
-    ).send()
+    await ui_start()
 
 
 @cl.on_message

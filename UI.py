@@ -1,16 +1,22 @@
 import chainlit as cl
 import PyPDF2
-from pathlib import Path
 from typing import List
+from chainlit.input_widget import Select
 from gemini_backend import get_gemini_backend
 from pdf_parser import get_pdf_parser
-import os
+from pdf_db_service import (
+    list_pdf_names,
+    get_pdf_bytes,
+    save_pdf_bytes,
+    extract_text_and_layout,
+    regenerate_pdf_with_layout,
+    write_preview_pdf,
+)
 
 # Store uploaded PDFs in session
 pdf_documents = []
 
 
-@cl.on_chat_start
 async def start():
     """Initialize the chat session and display the PDF import interface."""
     await cl.Message(
@@ -20,16 +26,62 @@ async def start():
                 "✅ Auto-detect regular and scanned PDFs\n"
                 "✅ Parse and extract text\n"
                 "✅ Create output.txt with parsed content\n"
-                "✅ AI-powered analysis with Gemini",
+                "✅ AI-powered analysis with Gemini\n\n"
+                "Database tools:\n"
+                "- Click 'Alege PDF din baza de date' to open a dropdown with all PostgreSQL PDFs",
+        actions=[
+            cl.Action(
+                name="open_db_dropdown",
+                value="open",
+                description="Alege PDF din baza de date",
+                payload={"source": "welcome"},
+            )
+        ],
     ).send()
 
 
-@cl.on_message
 async def handle_message(message: cl.Message):
     """Handle incoming messages and process uploaded files."""
     global pdf_documents
     gemini = get_gemini_backend()
     parser = get_pdf_parser()
+
+    pending_edit = cl.user_session.get("pending_db_edit")
+    if pending_edit and not message.elements:
+        user_text = message.content if isinstance(message.content, str) else ""
+        command = user_text.strip()
+
+        if not command:
+            await cl.Message(content="⚠️ Trimite textul editat sau `/cancel`.").send()
+            return
+
+        if command.lower() == "/cancel":
+            cl.user_session.set("pending_db_edit", None)
+            await cl.Message(content="✅ Editarea din baza de date a fost anulata.").send()
+            return
+
+        try:
+            original_pdf = pending_edit["original_pdf"]
+            templates = pending_edit["templates"]
+            pdf_name = pending_edit["pdf_name"]
+
+            edited_pdf = regenerate_pdf_with_layout(original_pdf, user_text, templates)
+            updated_rows = save_pdf_bytes(pdf_name, edited_pdf)
+
+            cl.user_session.set("pending_db_edit", None)
+
+            preview_path = write_preview_pdf(pdf_name, edited_pdf, suffix="_updated")
+            await cl.Message(
+                content=(
+                    f"✅ PDF actualizat in baza de date: **{pdf_name}**\n"
+                    f"Randuri actualizate: {updated_rows}"
+                ),
+                elements=[cl.Pdf(name=f"{pdf_name} (updated)", path=preview_path, display="inline")],
+            ).send()
+        except Exception as exc:
+            await cl.Message(content=f"❌ Eroare la salvare PDF: {str(exc)}").send()
+
+        return
 
     # Check if files were uploaded
     if message.elements:
@@ -139,7 +191,8 @@ async def handle_message(message: cl.Message):
     else:
         # Handle text messages with Gemini
         if pdf_documents:
-            user_input = message.content.strip().lower()
+            content = message.content if isinstance(message.content, str) else ""
+            user_input = content.strip().lower()
 
             # Summarize command
             if "summarize" in user_input or "summary" in user_input:
@@ -171,14 +224,163 @@ async def handle_message(message: cl.Message):
                     for pdf in pdf_documents
                 ])
 
-                analysis = gemini.analyze_pdf_content(combined_text, message.content)
+                analysis = gemini.analyze_pdf_content(combined_text, content)
                 await cl.Message(
                     content=f"**Analysis:**\n\n{analysis}"
                 ).send()
         else:
             await cl.Message(
-                content="Please upload PDF documents using the file upload feature."
+                content=(
+                    "Please upload PDF documents using the file upload feature, or use "
+                    "the button 'Lista PDF-uri din baza de date'."
+                ),
+                actions=[
+                    cl.Action(
+                        name="open_db_dropdown",
+                        value="open",
+                        description="Alege PDF din baza de date",
+                        payload={"source": "empty_state"},
+                    )
+                ],
             ).send()
+
+
+async def _send_db_pdf_actions(pdf_name: str):
+    await cl.Message(
+        content=f"**{pdf_name}**",
+        actions=[
+            cl.Action(
+                name="view_db_pdf",
+                value=pdf_name,
+                description="Vizualizeaza",
+                payload={"pdf_name": pdf_name},
+            ),
+            cl.Action(
+                name="edit_db_pdf",
+                value=pdf_name,
+                description="Editeaza si salveaza",
+                payload={"pdf_name": pdf_name},
+            ),
+        ],
+    ).send()
+
+
+@cl.action_callback("open_db_dropdown")
+async def open_db_dropdown_action(_action: cl.Action):
+    """Open a dropdown with all PDF names from PostgreSQL."""
+    try:
+        names = list_pdf_names()
+    except Exception as exc:
+        await cl.Message(content=f"❌ Nu am putut citi baza de date: {str(exc)}").send()
+        return
+
+    if not names:
+        await cl.Message(content="ℹ️ Nu exista PDF-uri in baza de date.").send()
+        return
+
+    cl.user_session.set("db_pdf_names", names)
+
+    await cl.ChatSettings(
+        [
+            Select(
+                id="db_pdf_selected",
+                label="Selecteaza PDF-ul din PostgreSQL",
+                values=names,
+                initial_value=names[0],
+            )
+        ]
+    ).send()
+
+    await cl.Message(content="⬇️ Foloseste dropdown-ul din dreapta sus (Settings), apoi alege PDF-ul.").send()
+
+
+@cl.on_settings_update
+async def on_settings_update(settings: dict):
+    """Handle dropdown selection updates for DB PDFs."""
+    selected = settings.get("db_pdf_selected")
+    available = cl.user_session.get("db_pdf_names") or []
+
+    if selected and selected in available:
+        await _send_db_pdf_actions(selected)
+
+
+@cl.action_callback("list_db_pdfs")
+async def list_db_pdfs_action(_action: cl.Action):
+    """List PDFs stored in PostgreSQL and expose view/edit actions."""
+    try:
+        names = list_pdf_names()
+    except Exception as exc:
+        await cl.Message(content=f"❌ Nu am putut citi baza de date: {str(exc)}").send()
+        return
+
+    if not names:
+        await cl.Message(content="ℹ️ Nu exista PDF-uri in baza de date.").send()
+        return
+
+    await cl.Message(content=f"📚 Am gasit {len(names)} PDF-uri in baza de date.").send()
+
+    for name in names:
+        await _send_db_pdf_actions(name)
+
+
+@cl.action_callback("view_db_pdf")
+async def view_db_pdf_action(action: cl.Action):
+    """Render a PDF from DB directly in chat."""
+    pdf_name = action.payload.get("pdf_name") if action.payload else None
+    if not pdf_name:
+        await cl.Message(content="❌ Numele PDF-ului lipseste.").send()
+        return
+
+    try:
+        pdf_bytes = get_pdf_bytes(pdf_name)
+        if not pdf_bytes:
+            await cl.Message(content=f"❌ PDF inexistent in baza de date: {pdf_name}").send()
+            return
+
+        preview_path = write_preview_pdf(pdf_name, pdf_bytes, suffix="_view")
+        await cl.Message(
+            content=f"📄 Vizualizare: **{pdf_name}**",
+            elements=[cl.Pdf(name=pdf_name, path=preview_path, display="inline")],
+        ).send()
+    except Exception as exc:
+        await cl.Message(content=f"❌ Eroare la vizualizare: {str(exc)}").send()
+
+
+@cl.action_callback("edit_db_pdf")
+async def edit_db_pdf_action(action: cl.Action):
+    """Prepare DB PDF for text edit and wait for user edited content."""
+    pdf_name = action.payload.get("pdf_name") if action.payload else None
+    if not pdf_name:
+        await cl.Message(content="❌ Numele PDF-ului lipseste.").send()
+        return
+
+    try:
+        pdf_bytes = get_pdf_bytes(pdf_name)
+        if not pdf_bytes:
+            await cl.Message(content=f"❌ PDF inexistent in baza de date: {pdf_name}").send()
+            return
+
+        text, templates = extract_text_and_layout(pdf_bytes)
+        cl.user_session.set(
+            "pending_db_edit",
+            {
+                "pdf_name": pdf_name,
+                "original_pdf": pdf_bytes,
+                "templates": templates,
+            },
+        )
+
+        preview = text[:1200] + ("..." if len(text) > 1200 else "")
+        await cl.Message(
+            content=(
+                f"✏️ **Editare pregatita pentru:** {pdf_name}\n\n"
+                "Trimite acum textul editat in urmatorul mesaj.\n"
+                "Scrie `/cancel` daca vrei sa anulezi.\n\n"
+                f"Preview text curent:\n\n{preview}"
+            )
+        ).send()
+    except Exception as exc:
+        await cl.Message(content=f"❌ Eroare la pregatirea editarii: {str(exc)}").send()
 
 
 @cl.action_callback("verify_parser")

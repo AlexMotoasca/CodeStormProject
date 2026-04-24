@@ -2,6 +2,7 @@ import streamlit as st
 import os
 import tempfile
 import base64
+import pymupdf4llm
 from typing import List
 
 # Import your existing backend modules
@@ -40,7 +41,10 @@ def parse_uploaded_file(file, role: str) -> dict:
         tmp_file.write(file_bytes)
         tmp_path = tmp_file.name
 
-    result = parser.parse_pdf(tmp_path)
+    # Dacă suntem în modul EDIT_DOC, vrem structura Markdown (as_markdown=True)
+    wants_markdown = (role == "EDIT_DOC")
+
+    result = parser.parse_pdf(tmp_path, as_markdown=wants_markdown)
     os.unlink(tmp_path)
 
     if result and result.get("success"):
@@ -56,7 +60,6 @@ def parse_uploaded_file(file, role: str) -> dict:
     else:
         st.error(f"Failed to parse {file.name}: {result.get('error')}")
         return None
-
 
 # --- State Initialization ---
 if 'audit_doc' not in st.session_state:

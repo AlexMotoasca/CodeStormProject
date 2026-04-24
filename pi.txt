@@ -1,0 +1,484 @@
+--- Page 1 ---
+PLAN DE iNVATAMANT
+al promotiei 2024-2027
+
+Universitatea Transilvania din Brasov
+
+Programul de studii
+
+universitare de licenta: INFORMATICA
+
+Domeniul fundamental: Matematica si stiinte ale naturii
+Domeniul de licenta: Informatica
+
+Facultatea: Matematica si informatica
+Durata studiilor: 3 ani
+
+Forma de invatamant: la distanta (ID)
+
+F01,1-PS-CIDIFR-02/ed.4,rev.4
+
+
+
+--- Page 2 ---
+1, OBIECTIVE DE FORMARE $I COMPETENTE.
+Obiectivul general al programului de studii consta in formarea specialistului cu studii de licenta in domeniul informatica,
+
+Obiectivele educationale vizeaz’:
+
+~ formarea de specialisti pregatiti pentru abordarea proiectelor de dezvoltare in firmele IT, capabili sd fac fat schimbérilor, pentrua se integra
+tn programe de dezvoltare tehnologica si stiintficd si pentru a dezvolta activitti didactice;
+
+~ dezvoltarea capacitatilor de comunicare gi de integrare intr-o colectivitate;
+
+~ dezvoltarea personalitatii a receptivitati fata de constructile teoretice si de utlitatea aplicatilor;
+
+~ formarea unui sistem de valori de eticd profesionala,
+
+Programul de studii pregateste specialisti pentru ocupatille de: programator, inginer de sistem in informaticd, proiectant de sisteme
+informatice, cu orientare catre dezvoltarea si implementarea sistemelor si aplicatilor distribuite si mobile. Disciplinele incluse in planul de
+invafamant asiguré absolventului capacitatea de a programa (scrie software) in diverse limbaje de programare, utilizind diverse tehnologii,
+Conducand la proiectarea, implementarea, dezvoltarea, depanarea, testarea si Intretinerea aplicatilor software. Absolventul poate proiecta si
+implementa sisteme de gestiune a datelor, poate analiza si gestiona date diverse si este pregatit pentru a urm&ri functionarea, integrarea si
+intrefinerea sistemelor de calcul, Poate gestiona accesul utilizatorilor la sisteme si poate realiza si gestiona documentatii tehnice. De
+asemenea, asigurd instalarea, actualizarea, testarea si restaurarea sistemelor de calcul, inclusiv a sistemelor de operare, acordand pentru
+acestea asistenfa software si consultanta utilizatorilor,
+
+Ocupatille asociate programului de studiu sunt inscrise in Registrul National al Calific&rilor din invatamantul Superior (RNCIS) astfek: analist
+{cod 251201), inginer de sistem in informatica (cod 251203), programator (cod 251202).
+
+Profil de competente dezvoltat in concordant cu nevoile identifcate pe piata munci gi cu cadrul national al califcdrilor, precum $i rezultatele
+
+invajariiasociate acestor competente sunt prezentate sintetic mal os. Prezentarea detaliata a acestora se regaseste in figele disciplinelor din
+planul de invatimant,
+
+Competente profesionale si rezultatele invataril
+
+CP1. Creeazi softuri, dezvolt& prototipul pentru software.
+
+Ri. 1.1. Absolventul transpune o serie de cerinte intr-un concept de software clar si organizat.
+
+Ri, 1.2. Absolventul creeazé o prima versiune incomplets sau preliminar& a unei aplicaii software pentru a simula unele aspecte specifice ale
+produsului final,
+
+CP2, Utilizeaza sabloane de proiectare de software, creeaza diagrama de proces.
+
+Ri. 2.1, Absolventul utilizeaza soluti reutilizabile, intocmeste cele mai bune practci in vederea indepliniriactivitatilor comune de dezvoltare
+TICin dezvoltarea gi proiectarea de software,
+
+Ri. 2.2. Absolventul alcdtuieste o diagramd care ilustreaz’ progresul sistematic inregistrat pe parcursul unei proceduri sau al unui sistem
+utilizand linii de legatura si un set de simboluri,
+
+CP3. Analizeazi specifica software, defineste arhitectura software, proiecteaza sistemul informatic,
+
+RI. 3.1, Absolventul evalueaza specificatile unui produs sau sistem software care urmeazii si fie dezvoltat prin identificarea cerintelor
+
+funcfionale gi nefunctionale, a constrangerilor si a posibilelor seturi de cazuri de utilizare care ilustreaza interactiunile dintre software $i
+utilizatorii sii,
+
+RI. 3.2, Absolventul creeaz& si documenteaz& structura produselor software, inclusiv componentele, cuplarea $i interfetele. Asigura
+fezabilitatea, functionalitatea si compatibilitatea cu platformele existente,
+
+RI 3.3, Absolventul defineste arhitectura, compozitia, componentele, modulele,interfefele gi datele pentru sistemnele informatice integrate
+(hardware, software gi retea), pe baza cerintelor sia specificatillor sistemului
+
+Competente transversale $i rezultatele invaarii
+
+CT1. Aplic& competente de bazii in materie de programare, opereaza echipamente hardware digitale.
+
+Ri. 1.1, Absolventul enurnerd instructiuni simple pentru un sistem informatic in vederea rezolv&rii problemelor sau a indeplinii sarcnilorla un
+
+nivel de baza si cu orientari adecvate, dac& este necesar.
+
+Ri. 1.2. Absolventu! utilizeaza echipamente precum monitor, mouse, tastatura, dispozitive de stocare, imprimante si scanere, pentrua efectua
+
+operatiuni precum conectarea, pornirea, oprirea, repornirea, salvarea fisierelor si alte operatiuni,
+
+72, Utilizeazd software de comunicare si colaborare, efectueaz& ciutiri pe Internet.
+
+RI. 2.1, Absolventul utlizeaza instrumente i tehnologii digitale simple pentru a comunica, a interactiona sia colabora cu cella
+
+Ri. 2.2, Absolventul caut& date, informatii si continut, prin cdut&ri simple in medii digitale.
+
+T3. Identificd probleme, solutioneaza probleme,
+
+RI. 3.1, Absolventul identificd si detecteaza diverse probleme si aspecte si ia deci cu privre la cea mai bun8 cale de urmat.
+
+RI. 3.2. Absolventul raporteaza problemele in consecinta atunci cand este necesar.
+
+Rj. 3.3, Absolventul gaseste solutiila probleme practice, operationale sau conceptuale intr-o gama larg de contexte,
+
+CT4, Demonstreaz& angajament, gandeste rapid, gandeste analitic, si mentine concentrarea pentru perloade lungi de timp.
+
+Ri. 4.1. Absolventul demonstreaza cisponibilitatea de a-si asuma imediat sarcinile, chiar dac& acestea sunt difcle sau incomode.
+
+Ri. 4.2. Absolventul este in masurd si infeleagd ss prelucreze cele ma importante aspecte ale faptelor si conexiunile acestora in mod rapid si preci.
+
+Ri. 4.3, Absolventul gandeste folosind logica si rationamentul pentru a identifica punctele tari si punctele slabe ale solutilor alternative,
+
+concluzillor sau abordrilor problemelor,
+
+Ri. 4.4, Absolventul rimane concentrat pe o perioads lunga de timp pentru a judeca corect si a lua deciaii adecvate.
+
+(CTS. Lucreazain echipe, organizeaz& informati, obiecte $1 resurse, d& dovada de dorinf& de Invatare, se adapteazi la schimbare, face fat stresului,
+
+RI. 5.1, Absolventul lucreaz& cu incredere in cadrul unui grup, fiecare facdnd-si partea lui in serviciul intregului,
+FO1.1-PS-CIDIFR-O2/ed.4,rev.4 2
+
+anaAwreAnaa ari & ik
+
+
+--- Page 3 ---
+RI. 5.2, Absolventul infelege sarcinile care ii revn $i procesele aferente, Organizeazd informati
+in conformitate cu anumite standarde si asigur& gestionarea sarcinii
+
+RI. 5.3, Absolventul d& dovads de o atitudine poztiva fafa de cerinfe noi si
+parcursul viefi,
+
+obiecte si resurse prin metode sistematice si
+
+Provocatoare care pot fi satisffcute doar prin inva are pe tot
+
+RI.5.4, Absolventul is schimba atitudinea sau comportamentul pentru a se adapta modificrilor de la locul de munca.
+5.5, Absolventul gestioneaza provocéile, perturbsile gi schimballe si se redreseaz& in urma regreselor sia adversitafjior,
+
+2, STRUCTURA PE SAPTAMANI A ANULUI UNIVERSITAR
+
+Numar de semestre: 2 / an universitar
+
+Numir de credite pe semestru: 30
+
+Numair de ore de activitai didactice/s8ptman&: 24-28
+Numarul de s&ptamani:
+
+nul de stuai | —At™aI didactce Sesiuni de examene Vacante
+Sem. Sem. lana [Vara Restante | lami | Primavard Vara
+[anutt 4 wf 3 fs as 2 3 1 n1
+ae 14 1% 3 4 Z 3 i 1 1
+nul I Li 70 + 3 + 4 2 3 1
+
+Practica se organizeaza pe parcursul semestrelor in care este prevazuta,
+
+3. ASIGURAREA FLEXIBILIZARII INSTRUIRII. CONDITIONARI
+
+Flexibilizarea programulul de studi este asigurat8 prin discipline optionale gi discipline facultative. Disciplinele la alegere (optionale) sunt
+Propuse incepand cu semestrul ntai $I sunt grupate in pachete optionale, care completeaza traseul de specializare a studentulu. Alegerea
+traseului se face de cdtre student in anul universitar anterior deruliri pachetelor de discipline optionale (cu exceptia optiunilor pentru semestrul
+|, care se exprima tnainte de semnarea Contractului anual de studi
+
+Procedura de desfasurare a actvitatilor didactice la disciplinele facultative i de tnscriere a notelor/calfcativelor in Suplimentul la diploma
+este prezentata in Regulamentul privind activitatea profesionald a studentior 5in instructiunea Initierea 1 derularea disciplinelor facultative.
+Alocarea creditelor pentru disciplinele facultative se face In urma sustineriicolocviului de absolvire a cursului. Credtele obtinute la disciplinele
+facultative nu inlocuiesc creditele pentru disciplinele obligatorii si optionale.
+
+4, CONDITII DE INSCRIERE IN ANUL DE STUDII URMATOR. CONDITI| DE PROMOVARE A UNUI AN DE STUDII
+
+Conditille de inscriere in anul urmator,
+privind activitatea profesionala a studentilor.
+
+5. EXAMENUL DE LICENTA
+
+conditile de a urma module de curs in avans si conditile de promovare sunt cuprinse in Regulamentul
+
+Perioada de intocmire a lucrarii de licenta: incepand cu penultimul semestru de studi,
+
+Definitivarea lucr&rii de licent&: in ultimul semestru de stu
+
+Perioada de sustinere a lucréfrii de licen: in sesiunea iunie-iulie a ultimului an de studii,
+Numérul de credite pentru sustinerea lucrarii de licen: 10 credite (in plus fat de cele 180).
+
+6. DISCIPLINELE SI ACTIVITATILE DIDACTICE ALOCATE PE ANI DE
+
+riul obligativit’tii
+
+I~ disciplina impusé (obligatorie)
+D0 ~ discipling optionala (la alegere)
+C2 ~criteriul continutului
+
+OF ~ discipling fundamentala
+
+DS ~ disciplina de specialitate
+DD/DR ~ disciplina in domeniu/discipling relevanta*
+DC ~ disciplin& complementar’
+
+OFc ~ disciplina facultativa
+
+Al ~ activitSti de autoinstruire
+
+‘I~ studiu individual
+
+AT ~ activit’ tutoriale
+
+TC teme de control
+
+‘AA ~ activitati aplicative asistate
+
+FV — forma de verificare
+
+FO1.1-PS-CIDIFR-02/ed.4,rev.4
+
+STUDII
+
+Cr. - nr. de credite
+* dac& este cazul
+
+Observatil:
+
+Al = nr. de ore de curs din planul de invat&imant pentru IF
+
+SI" = diferenta dintre totalul de ore dedicate discipline’ (25 ore x
+nr. de credite) si nr. de ore didactice pe semestru
+
+AT**4TC = nr. ore de seminar din planul de invatamant pentru IF
+AA** = nr, ore de laborator/proiect din planul de invétamant
+pentru IF
+
+* Orele alocate SI se preiau ca atare din planul de invatzimant pentru
+IF si nu intré in calculul totalului numarului de ore didactice
+obligatori/optionale pe semestru din planul de invasamant pentru ID.
+** La forma ID, AT/AA pot fi constituite din ATF (activitSti
+tutoriale/asistate fagd in fat’) si ATD (activitati tutoriale/asistate la
+distant, desfagurate online sincron pe platforms), dar ATD nu pot
+reprezenta mai mult de 50% din totalul orelor alocate pentru AT/AA.
+
+
+--- Page 4 ---
+\probat in sedinta
+
+Universitatea Transivania din Bragov Senatului Iniversitati i Transilvaniampisterut Educatjei
+
+ae nace (tegeierd _ j din Brasov din data de \Valabil in anul universitar 2024-2025
+lepartamentul coordonator: Matematica si Informati *
+
+Programul de studii universitare de licent&: Informatica) a Aautante 2024... ;:
+
+Domeniul fundamental: Matematica si stlinte ale naturil y
+Domeniul de licen: Informatica [ rea
+
+A382
+Prof. df-loan Vasilé ABRUDAN,
+
+RECTORY
+
+Ourata studillor: 3 ani
+Forma de invatémant: la distanta (ID)
+
+ANULI
+Nr Discipline obligatorilimpuse) G] codul Semestrul! Semestrul
+ert, Cu DI isciptinel | ai [at] Tc] AA] Si[ FV Sale Tc[Aa] si] FV | cr.
+1.| Analiza matematica oc[apoor-io [42[ [20] [ss] e | 5
+iB Fundamentele algebrice ale informaticil DF] AGi2-10 [28 820] Jes] c | s
+Algoritrn fundamental or] m3i0 [2a[ «| rol 2s[eof e [6 | |
+4, | Fundamentele programa oF] iria-i0 | 28 2s[ea| e | 5 is
+5. | Logicd matematic’ si computationalé pF[ miso [2e| «|r| [es] e | 5
+6. | Redactare si comunicare stiinfific si profesional pc[ reve [ra] [rol [aac [2 ||
+7.| Algebra liniarS, geometrie analiticd si diferentiala bc | aG21-1 CI 28| 8/20] es} c | 5
+8. | Arhitectura sistemelor de calcul DF | 1722-10 28| « [10] 14[69] © | 5
+9, | Programare orientatd pe obiecte los | 1723-10 2e| | |2efou e | 6
+10,| Structuride date DF] 1126-1 28 [ze[s«[ & | 6
+111] Sisteme de operare [oF | 1a25-10 28 ze[su] — | 6
+12. Educatie fizica si sport 1 oc | €F26-10 el2o} [2z/ar| 2
+168|28]70| 56] faer2c 140[ 20/50] 98] |aeerc| 30
+Total ore didactice obligatoril pe semestru os | 28 = aula
+Nr Discipline opfionale (la alegere) CG] Codul | Semestrull Semestrul i
+et, D0 discipline’ | at [at] rc[ aa] si] Fv | cr.| allat|tc|aa] si] Fv | cr.
+Se alege o singur& disciplina din flecare pachet —
+Limba engleza 1 LE-ID
+ie Limba germana 1 i tsr-0_| ies Se
+1a Limba englezd 2 pc | Le2=10 Alla taile
+Limba germand 2 UG2-1
+Total ore didactice optionale pe semestru MpAjopoy je}, pelelofo] Tl,
+28 1 28 1
+Total 350 7 | 30 336 6 [3042
+Nr Discipline facultative CG] Codul Semestrull Semestrul i
+ert. Cu DFe discipline | al] at] tc[ Aa] si] FV] cr.| allat|tc|aa| si] Fv | cr.
+1. | Notiuni fundamentale de informatica oc | NFID zl | c[2
+2. | Notiuni fundamentale de matematics bc | NFM-ID @ [20] cla
+8 [20/28[_[2c |
+Total ore didactice facultative pe semestru 7 > 4
+Conf. dr. Ion Gabriel STAN, Conf. dr. Ana ENE,
+Decanul facultati Yi ~ Coordonatorul CIDIFR
+Conf, dr. Nieugor MINCULETE, Conf. dr. Lif SANGEORZAN,
+Directorul de departampent Coordonat ramulul de studil ID
+¢ ‘a
+FO1.1-PS-CIDIFR-O2/ed.4,rev.4 4
+
+CONFORM Cli o”n
+
+
+--- Page 5 ---
+Universitatea Transilvania din Brasov
+
+Facultatea: Matematica sl Informatick
+
+Departamentul coordonator: Matematic& i Informatica
+Programul de studil universitare de licen: Informaticdt
+Domeniul fundamental: Matematica si stlinge ale naturii
+Domeniul de licenta: informatica
+
+Durata studiilor: 3 ani
+
+Ministerul Educatiei
+Valabil in anul universitar 2025-2026
+
+—
+
+{sAPROBAT,
+
+rof. dr: Joan Vasile ABRUDAN,
+Forma de fnvatamént: la distanta (1D) RECTOR,
+ANULII
+Nr Discipline obligatorii impuse) Gs] Codut Semestrul Semestrul i
+ert. Cul disciplinet |'ai | at] Tc] aa] si] Fv | cr.| al] at|tc[aa|si| Fv | cr
+1.| Algoritmica grafurilor oF | 1731-10 | 28 2e{es] Ee [5
+Limbaje formale si compilatoare or} irszt0_[ 28] 4] rol rafea[ e [5 [TT _[
+Medii si instrumente de programare oF | 133-10 | 26 2ej6o] E | 5
+4, | Baze de date oF | 34-10 | 26 2e6s] E | 5
+5. | inteligenta artificiald oF | ir3s-0 [26 2e[eo[_e€ [5
+6, | Educatie fizica si sport 2 OC} EFO2-ID 8 20} 22) AR} 2
+7. | Automate, calculabilitate si complexitate OF | iaa1-10 2e| 4 [riolifes] € | 5
+8. | Metode avansate de programare os | 1A42-I0 28 2sjeo] — | 5
+9. | Retele de calculatoare or [iaeao [TT 28{ | [zeles] & | 5
+10] Calcul numeric os | taas-id ze] | [eels c [5
+Total ore didactice obligatorll pe semestru Tol 12 a 228 = _ ual a ie cd = =
+Nr. | Discipline optionale (la alegere) G Codul Semestrul! Semestrul Il
+crt] Cx DO disciplinei Lal AT| Tc} AAJ Si} FV | Cr.| Al] AT} TC} AA| si] Fv | Cr,
+Se alege o singura discipling din fiecare pachet
+11, Modern Cr-+-managing networking projects oc | MC36=10 28 lel cls [|
+Optional firma 1 OP38-10
+qa,|_Procesarea imaginilor digitale bs | PRAS=10 - valaalvenlcs
+Optional firma 2 OP46-ID |
+Sisteme moderne de modelare 3D in C++ MD48-ID
+13,| Tehnologii digitale pentru loT ps | 049-10 28 28/69] c | 5
+Optional firma 3 DAAO-ID
+Total ore didactice optionale pe semestru = 2e]_1 i) , 156 Bl} | 4
+56 1 112 2
+Total 364 6 [3042] 336 6 | 30
+Conf. dr. lon Gabriel STAN, Conf. dr. Ana ENE,
+Decanul facultagit - Yi Coordonatorul CIDIF}
+Conf. dr. Nicugor MINCULETE, Conf. dr. Livia SANGEORZAN,
+Directorul de departament Coordonatorul pkograifului de stuali 1D
+FO1.1-PS-CIDIFR-O2/ed.4,rev.4 5
+
+CONFORM CU aan
+
+
+
+--- Page 6 ---
+Universitatea Transilvania din Bragov
+
+Facultatea: Matematic& si Informaticd
+
+Departamentul coordonator: Matematica si Informatica
+Programul de studi universitare de licen: Informatica
+
+Domeniu! fundamental: Matematica gl gtiinte
+
+naturi
+
+Domeniul de licenta: Informatic&
+Durata studillor: 3 ani
+Forma de invataimant: la distant& (1D)
+
+Ministerul Educatiei
+Valabil in anul universitar 2026-2027
+
+ANULIII
+Nr Discipline obligatorilimpuse) G] codul Semestrull Semestrul it
+tte CuI aisciptinel |"at [at] tc] aA] st] Fv | cr | ai] at[tc|aa] si] Fv] cn
+1._| inginerie software os] msi-i0 [2a] | |2sles| & | 5
+2. | interfefe om-calculator os | 1as2-10_| 28 [zeles[e [5
+3. | Dezvoltarea aplicatilor web os | 1as3-i0_| 28 2e[ 69] & | 5
+4 | Practicd de specialitate ps | 1154-10 hiqial_c | 5
+5._| Managementul proiectelor informatice S| 1A61-10 20 zolas| E | 5
+6. | Programare paraleld, concurentd i distribuité os] 62-10 20 zofes| € | 5
+7,_| Probabiltat si statisticd DF | APS3-I0 20| 4[6|r0les| & | 5
+8._| Practica pentru elaborarea lucraril de licent& os | iré4-0 | HH x 6s] c | 5
+84 19 E+ 1C 60} 4| 6/11 /3E+1C]
+Total ore didactice obligatoril pe semestru 260 ry 20 180 4 20
+Nr Discipline optionale (la alegere) G] codul Semestrul Semestrul i
+crt CD aisciptinei | at] at] tc] aal si] Fv | cr.| allat|rc]aa] si] wv] cr.
+Se aloge o singurd discipling din fiecare pachet
+Simularea sistemelor dinamice ITS6-ID
+9. | Dezvoltarea jocurlor pe calculator in Unity cu C# os [i570 _| 28 28| 69] c | 5
+Optional firma 4 OP55-10
+Internet of Things _|_Lise0
+10,|_Sableane de proiectare software os | 20-10 | lal od.|s
+Inferentd statistic& in Machine Learning: abordare practical» | IMs5-1D
+Optional firma 5 0P56-10 |
+Programarea aplicatillor mobile PAGS=I
+11.{ Auditul sistemelor informatice os | as67-10 20 2ojes| c | s
+Optional firma 6 OP66-10
+Dezvoltarea jocurlor pe calculator cu Scratch gi Greenfoot| | 060-1
+12,| Capitole speciale de inteligent’ artifical os [1MSS69-1D 20 2ojes| c | 5
+Optional firma 7 OPE8-ID
+Total ore didactice optionale pe semestru a 58] _| 2 | 1 [2 ao] EI 10
+li 2 A 20 2
+Total 392 6 | 30 260 6 30
+
+Conf. dr. lon Gabriel STAN, i~_)
+
+Decanul facultail y
+
+Conf, dr. Nicusor MINCULETE,
+
+Dire
+
+Fo1.4
+
+ctorul de departame;
+
+}-PS-CIDIFR-02/ed.4,rev.4
+
+COMNCAnMAA As
+
+Conf. dr. Ana ENE,
+Coordonatorul CIDIFR
+
+Conf, dr. kiya SANGEORZAN,
+Coordonptorul programului de studi ID
+
+
+
+--- Page 7 ---
+Universitatea Transilvania din Brasov Ministerul Educatiei
+
+Facultatea: Matematica si Informatica Valabil pentru promotia 2024-2027
+Departamentul coordonator: Matematica’ gi Informatica
+Programul de studii universitare de licenta: Informatica
+Domeniul fundamental: Matematica gi stiinte ale naturii
+Domeniul de licenta: Informatica
+
+Durata studi ani
+
+Forma de invatamant: la distanta (ID)
+
+[_APROBaT,
+-P}of. divloan Vasile ABRUDAN,
+
+BILANT GENERALI
+
+obligatori 70%-B3%
+
+optionale 17%-30%
+TOTAL -
+
+facultative =
+
+BILANT GENERAL II
+
+— Nr. de ore Total Standard ARACIS
+eine Ani!_| Anti | ore %
+
+fundamentale 40,43 35-45%
+de specialitate 02 | 43,76 35%-50%
+complementare 322_| 1581 10%-20%
+TOTAL 100% -
+Conf.dr. lon Gabriel STAN, off Conf. dr. Ana ENE,
+Decanul facultatil wy A Coordonatorul CIDI
+Conf.dr. Nicusor MINCULETE, Conf, dr. \ipauccorez
+Directorul de departament Coordonat
+
+ye mului de studii ID
+
+CONFORM Cli *

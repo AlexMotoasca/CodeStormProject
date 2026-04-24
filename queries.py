@@ -1,88 +1,94 @@
 import difflib
+import json
 from pathlib import Path
-from gemini_backend import GeminiBackend
-    gemini_backend = GeminiBackend()
+from gemini_backend import get_gemini_backend
 
-def analyse_pdf(pdf_txt):
-    query = """Analizează textul de mai jos extras dintr-un PDF și validează calitatea datelor.
+# Get the Gemini backend instance
+gemini_backend = get_gemini_backend()
 
-REGULI DE VALIDARE:
-- Numele persoanelor nu trebuie să conțină cifre
-- Locațiile nu trebuie să conțină cifre în afara numerelor de stradă
-- Orice valoare numerică (vârstă, preț, cantitate, suprafață) trebuie să fie >= 0
-- Datele calendaristice trebuie să fie valide și logice
-- Adresele de email trebuie să respecte formatul standard
-- Numerele de telefon trebuie să conțină doar cifre, spații, +, -, ()
-- Câmpurile care par obligatorii nu trebuie să fie goale sau completate cu placeholder (ex: "N/A", "-", "???")
-- Sumele financiare nu pot fi negative
 
-Returnează un JSON cu structura:
-{
-  "document_type": "tipul documentului detectat",
-  "total_issues": număr,
-  "errors": [
-    {
-      "field": "numele câmpului",
-      "value": "valoarea găsită",
-      "rule_violated": "regula încălcată",
-      "suggestion": "cum ar trebui să arate corect"
-    }
-  ],
-  "warnings": [...același format...],
-  "valid_fields": număr,
-  "overall_status": "VALID" | "INVALID" | "NEEDS_REVIEW"
-}"""
-    result = gemini_backend.analyse_pdf(txt,query)
-    return result
+def compare_fd_pi(fd_txt, pi_txt):
+    """
+    Compare Fișa Disciplinei (FD) with Plan Învățământ (PI) documents.
 
-def compare_fd_pi(fd_txt,pi_txt):
-    query = """Compară datele din cele două documente de mai jos și identifică toate inconsistențele dintre ele.
+    Args:
+        fd_txt: Text from Fișa Disciplinei document
+        pi_txt: Text from Plan Învățământ document
+
+    Returns:
+        Comparison analysis as formatted text
+    """
+    query = """Compară datele din cele două documente de mai jos și creează un raport detaliat cu toate inconsistențele.
 
 REGULI DE VERIFICARE A COERENȚEI:
-- Datele de identificare (nume, CNP, serie buletin) trebuie să fie identice în ambele documente
-- Vârsta / data nașterii trebuie să corespundă în ambele documente
-- Anul de studiu / grupa / seria trebuie să fie același în ambele documente
-- Adresa trebuie să fie aceeași sau modificarea să fie justificată
-- Specializarea / facultatea / programul de studiu trebuie să coincidă
-- Notele / mediile menționate trebuie să fie consistente
-- Statusul (activ, exmatriculat, suspendat) trebuie să fie același
-- Datele calendaristice (an înmatriculare, an absolvire) trebuie să fie logice și consistente
-- Orice câmp care apare în ambele documente trebuie să aibă aceeași valoare sau o diferență explicabilă
+- Datele de identificare (program, facultate, departament) trebuie să fie identice
+- Disciplinele / cursurile trebuie să coincidă
+- Numărul de ore (curs, seminar, laborator) trebuie să fie consistent
+- Creditele (ECTS) trebuie să se potrivească
+- Anul de studiu / semestrul trebuie să fie același
+- Competențele și obiectivele trebuie să fie în acord
+- Evaluarea și ponderea notelor trebuie să fie coerente
 
-IMPORTANT:
-- O diferență este EROARE dacă valorile se contrazic fără explicație logică (ex: anul 2 vs anul 3)
-- O diferență este AVERTISMENT dacă valorile sunt diferite dar ar putea fi justificate (ex: adresă schimbată)
-- Ignoră diferențele de formatare (majuscule, spații, diacritice lipsă) dacă sensul e același
+FORMAT RĂSPUNS - Scrie un raport CLAR ȘI CITIBIL (NU JSON):
 
-Returnează un JSON cu structura:
-{{
-  "document_1_type": "tipul primului document detectat",
-  "document_2_type": "tipul celui de-al doilea document detectat",
-  "total_inconsistencies": număr,
-  "errors": [
-    {{
-      "field": "numele câmpului inconsistent",
-      "value_doc1": "valoarea din documentul 1",
-      "value_doc2": "valoarea din documentul 2",
-      "explanation": "de ce e o problemă",
-      "suggestion": "care valoare pare corectă sau cum se poate rezolva"
-    }}
-  ],
-  "warnings": [
-    {{
-      "field": "numele câmpului",
-      "value_doc1": "valoarea din documentul 1",
-      "value_doc2": "valoarea din documentul 2",
-      "explanation": "de ce e suspect dar nu neapărat greșit"
-    }}
-  ],
-  "matching_fields": număr,
-  "overall_status": "CONSISTENT" | "INCONSISTENT" | "NEEDS_REVIEW"
-}}"""
-    compare = gemini_backend.compare(fd_txt,pi_txt,query)
-    return compare
+📊 RAPORT COMPARATIV FD vs PI
+================================
+
+🔍 STATUS GENERAL: [CONSISTENT / INCONSISTENT / NEEDS_REVIEW]
+
+📋 STATISTICI:
+- Câmpuri care se potrivesc: [X]
+- Inconsistențe totale: [Y]
+
+---
+
+❌ ERORI CRITICE:
+(pentru fiecare eroare: câmp, valoare în FD, valoare în PI, de ce e problemă, sugestie)
+
+---
+
+⚠️ AVERTISMENTE:
+(pentru fiecare avertisment: câmp, valoare în FD, valoare în PI, de ce e suspect)
+
+---
+
+✅ CONCLUZII:
+(rezumat final și recomandări)
+
+DOCUMENT 1 - Fișa Disciplinei:
+{fd_txt}
+
+DOCUMENT 2 - Plan Învățământ:
+{pi_txt}
+
+Scrie raportul în format text clar și ușor de citit. NU FOLOSI JSON."""
+
+    try:
+        response = gemini_backend.compare_pdfs(fd_txt, pi_txt, query)
+
+        return {
+            "success": True,
+            "analysis": response  # Return raw text directly
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e),
+            "analysis": None
+        }
+
 
 def compare_fd(text1: str, text2: str) -> dict:
+    """
+    Simple line-by-line comparison using difflib.
+
+    Args:
+        text1: First document text
+        text2: Second document text
+
+    Returns:
+        Dictionary with differences
+    """
     lines1 = text1.splitlines()
     lines2 = text2.splitlines()
 
@@ -107,3 +113,40 @@ def compare_fd(text1: str, text2: str) -> dict:
         "differences_doc1": only_in_1,
         "differences_doc2": only_in_2,
     }
+
+
+def save_documents_to_files(fd_text: str, pi_text: str, fd_path: str = "fd.txt", pi_path: str = "pi.txt") -> dict:
+    """
+    Save parsed documents to separate text files.
+
+    Args:
+        fd_text: Fișa Disciplinei parsed text
+        pi_text: Plan Învățământ parsed text
+        fd_path: Path to save Fișa Disciplinei
+        pi_path: Path to save Plan Învățământ
+
+    Returns:
+        Status dictionary
+    """
+    try:
+        # Save Fișa Disciplinei
+        with open(fd_path, 'w', encoding='utf-8') as f:
+            f.write(fd_text)
+
+        # Save Plan Învățământ
+        with open(pi_path, 'w', encoding='utf-8') as f:
+            f.write(pi_text)
+
+        return {
+            "success": True,
+            "fd_file": fd_path,
+            "pi_file": pi_path,
+            "fd_size": len(fd_text),
+            "pi_size": len(pi_text)
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
+

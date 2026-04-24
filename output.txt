@@ -1,13 +1,3 @@
-=== PDF PARSER VERIFICATION REPORT ===
-
-File: fisa_disciplina.pdf
-Pages: 99
-Type: Regular Text
-Extraction Method: text_extraction
-Timestamp: 2026-04-24T17:49:38.508409
-
-=== EXTRACTED TEXT ===
-
 --- Page 1 ---
  
 F03.1-PS7.2-01/ed.3, rev.6 
@@ -5649,5 +5639,3 @@ de aprofundare)/ DSI (disciplină de sinteză)/ DCA (disciplină de cunoaştere 
 4) Regimul disciplinei (obligativitate) - se alege una din variantele: DI (disciplină obligatorie)/ DO (disciplină 
 opțională)/ DFac (disciplină facultativă); 
 5) Un credit este echivalent cu 30 de ore de studiu (activități didactice şi studiu individual).
-
-=== END OF DOCUMENT ===

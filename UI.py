@@ -90,6 +90,7 @@ async def handle_message(message: cl.Message):
                 verify_action = cl.Action(
                     name="verify_parser",
                     value=file.name,
+                    description="Verify parser and create output.txt",
                     payload={"pdf_name": file.name}
                 )
                 await cl.Message(
@@ -100,7 +101,6 @@ async def handle_message(message: cl.Message):
                             f"**PDF:** {file.name}",
                     actions=[verify_action]
                 ).send()
-
             except Exception as e:
                 await cl.Message(
                     content=f"❌ Error processing {file.name}: {str(e)}"
@@ -179,77 +179,47 @@ async def verify_parser_action(action: cl.Action):
     """Handle parser verification button click."""
     parser = get_pdf_parser()
 
-    # Get pdf_name from action payload
-    pdf_name = action.payload.get("pdf_name")
-
-    # Find the matching PDF in pdf_documents
-    matching_pdf = next((pdf for pdf in pdf_documents if pdf['name'] == pdf_name), None)
-
-    if not matching_pdf:
-        await cl.Message(content=f"❌ Could not find PDF: {pdf_name}").send()
-        return
-
     try:
-        # Parse the PDF again to verify
+        # Get pdf_name from payload
+        pdf_name = action.payload.get("pdf_name") if action.payload else None
+
+        if not pdf_name:
+            await cl.Message(content="❌ Error: PDF name not found").send()
+            return
+
+        # Find the matching PDF
+        matching_pdf = next((pdf for pdf in pdf_documents if pdf['name'] == pdf_name), None)
+
+        if not matching_pdf:
+            await cl.Message(content=f"❌ PDF not found: {pdf_name}").send()
+            return
+
+        # Re-parse the PDF
         parse_result = parser.parse_pdf(matching_pdf['path'])
 
-        if parse_result['success']:
-            # Create output.txt with the parsed text
-            output_file = "output.txt"
+        if parse_result['success'] and parse_result['text']:
+            # Save directly to output.txt (just the raw text)
+            with open("output.txt", 'w', encoding='utf-8') as f:
+                f.write(parse_result['text'])
 
-            # Create content for output file
-            output_content = f"""=== PDF PARSER VERIFICATION REPORT ===
+            # Send success message
+            msg = f"""✅ Parser Verification Complete!
 
 File: {matching_pdf['name']}
 Pages: {parse_result['page_count']}
 Type: {'Scanned (OCR)' if parse_result['is_scanned'] else 'Regular Text'}
-Extraction Method: {parse_result['method']}
-Timestamp: {__import__('datetime').datetime.now().isoformat()}
 
-=== EXTRACTED TEXT ===
+✅ output.txt created with {len(parse_result['text'])} characters"""
 
-{parse_result['text']}
-
-=== END OF DOCUMENT ===
-"""
-
-            # Save to output.txt
-            with open(output_file, 'w', encoding='utf-8') as f:
-                f.write(output_content)
-
-            # Send verification report
-            verification_msg = f"""✅ **PARSER VERIFICATION SUCCESSFUL**
-
-📄 **File Details:**
-- Name: {matching_pdf['name']}
-- Pages: {parse_result['page_count']}
-- PDF Type: {'🖼️ Scanned Document (OCR Used)' if parse_result['is_scanned'] else '📄 Regular Text PDF'}
-- Extraction Method: {parse_result['method']}
-
-📝 **Text Extraction:**
-- Total Characters: {len(parse_result['text'])}
-- Preview: {parse_result['text'][:200]}...
-
-💾 **Output File:**
-- ✅ Created: output.txt
-- Location: {os.path.abspath(output_file)}
-- Size: {len(output_content)} bytes
-
-🎉 **Parser is working correctly!**
-The parsed text has been saved to output.txt
-"""
-
-            await cl.Message(content=verification_msg).send()
-
+            await cl.Message(content=msg).send()
         else:
-            await cl.Message(
-                content=f"❌ **PARSER VERIFICATION FAILED**\n\nError: {parse_result['error']}"
-            ).send()
+            await cl.Message(content=f"❌ Failed to parse PDF: {parse_result['error']}").send()
 
     except Exception as e:
-        await cl.Message(
-            content=f"❌ **VERIFICATION ERROR**\n\nException: {str(e)}"
-        ).send()
+        print(f"ERROR in verify_parser_action: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        await cl.Message(content=f"❌ Error: {str(e)}").send()
 
 
 def get_loaded_pdfs() -> List[dict]:

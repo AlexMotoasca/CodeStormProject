@@ -1,0 +1,55 @@
+ 
+F03.1-PS7.2-01/ed.3, rev.6 
+1 
+ 
+FIŞA DISCIPLINEI 
+ 
+1. Date despre program 
+1.1 Instituția de învățământ superior Universitatea Transilvania din Braşov 
+1.2 Facultatea Matematică şi Informatică 
+1.3 Departamentul Matematică şi Informatică 
+1.4 Domeniul de studii de licență1) Informatică 
+1.5 Ciclul de studii2) Licență 
+1.6 Programul de studii/ Calificarea INFORMATICĂ APLICATĂ/ Licențiat în Informatică 
+ 
+2. Date despre disciplină  
+2.1 Denumirea disciplinei Analiză matematică 
+2.2 Titularul activităților de curs Lect. dr. Maria Dimitriu 
+2.3 Titularul activităților de seminar/ laborator/ 
+proiect 
+Lect. dr. Maria Dimitriu 
+2.4 Anul de studiu 1 2.5 Semestrul 1 2.6 Tipul de evaluare E 2.7 Regimul 
+disciplinei 
+Conținut3) DC 
+Obligativitate4) DI 
+ 
+3. Timpul total estimat (ore pe semestru al activităților didactice)  
+3.1 Număr de ore pe săptămână 5 din care: 3.2 curs 3 3.3 seminar/ laborator/ 
+proiect 
+2 
+3.4 Total ore din planul de învățământ 70 din care: 3.5 curs 42 3.6 seminar/ laborator/ 
+proiect 
+28 
+Distribuția fondului de timp ore 
+Studiul după manual, suport de curs, bibliografie şi notițe 25 
+Documentare suplimentară în bibliotecă, pe platformele electronice de specialitate şi pe teren  10 
+Pregătire seminare/ laboratoare/ proiecte, teme, referate, portofolii şi eseuri 40 
+Tutoriat 2 
+Examinări 3 
+Alte activități..................................... 0 
+3.7 Total ore de activitate a 
+studentului 
+80  
+3.8 Total ore pe semestru 150  
+3.9 Numărul de credite5) 6  
+ 
+4. Precondiții (acolo unde este cazul) 
+4.1 de curriculum • Elemente de analiză matematică din liceu. 
+4.2 de competențe • Calculul limitelor de şiruri şi de funcții.  
+• Derivarea funcțiilor elementare.  
+• Integrarea funcțiilor elementare. 
+• Reprezentarea grafică a  funcțiilor. 
+ 
+5. Condiții (acolo unde este cazul) 
+5.1 de desfăşurare a cursului • Sală dotată cu minim 2 table şi echipamente multimedia. Capacitatea sălii: 100 
+loc 

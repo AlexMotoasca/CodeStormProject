@@ -1,6 +1,4 @@
 import difflib
-import json
-from pathlib import Path
 from gemini_backend import get_gemini_backend
 
 # Get the Gemini backend instance
@@ -171,3 +169,38 @@ def check_vague_content_and_bibliography(pi_text: str, pi_name: str) -> dict:
             "error": str(e),
             "analysis": None
         }
+
+
+def generate_fd_from_pi(pi_text: str, pi_name: str, out_path: str = "fd_generated.txt") -> dict:
+    """Generate a FD skeleton (text) from a PI text using Gemini.
+
+    Args:
+        pi_text: Extracted text from PI
+        pi_name: PI filename
+        out_path: Where to save generated FD text
+
+    Returns:
+        {success: bool, fd_text: str|None, error: str|None, out_path: str|None}
+    """
+    try:
+        res = gemini_backend.generate_fd_skeleton_from_pi(pi_text, pi_name)
+        if not res.get("success"):
+            return {"success": False, "error": res.get("error", "Unknown error"), "fd_text": None, "out_path": None}
+
+        fd_text = res.get("fd_text") or ""
+        try:
+            with open(out_path, "w", encoding="utf-8") as f:
+                f.write(fd_text)
+        except Exception as e:
+            # generation succeeded even if saving failed
+            return {
+                "success": True,
+                "fd_text": fd_text,
+                "out_path": None,
+                "warning": f"Nu am putut salva {out_path}: {str(e)}",
+            }
+
+        return {"success": True, "fd_text": fd_text, "out_path": out_path}
+    except Exception as e:
+        return {"success": False, "error": str(e), "fd_text": None, "out_path": None}
+

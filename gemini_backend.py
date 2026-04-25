@@ -7,7 +7,7 @@ This module handles all interactions with Google's Gemini 1.5 Flash API.
 import os
 import json
 import time
-from typing import Optional, List
+from typing import Optional
 import google.generativeai as genai
 from dotenv import load_dotenv
 
@@ -180,7 +180,6 @@ JSON doar:"""
             result = self.generate_text(master_prompt)
             # Try to parse the JSON response
             try:
-                import json
                 # Clean up potential markdown formatting from the response
                 cleaned_result = result.strip()
                 if cleaned_result.startswith('```json'):
@@ -262,6 +261,73 @@ Scrie raportul în format text clar, ușor de citit. NU FOLOSI JSON."""
             return {"success": True, "analysis": result}
         except Exception as e:
             return {"success": False, "error": str(e), "analysis": None}
+
+    def generate_fd_skeleton_from_pi(self, pi_text: str, pi_name: str) -> dict:
+        """Generate a Fișa Disciplinei (FD) skeleton pre-filled from a Plan de Învățământ (PI).
+
+        Output must be Markdown-like text compatible with `pdf_generator.generate_pdf_from_text`:
+        - Headings should start with # / ##
+        - Tables must use |...| rows
+        - Use placeholders (ex: "___") when PI doesn't contain a value.
+        """
+
+        # Optional: use an extracted FD as a style guide (kept short to avoid token blow-up)
+        fd_style_guide = ""
+        try:
+            # `output.txt` exists in your repo and is a good example of FD structure
+            with open("output.txt", "r", encoding="utf-8") as f:
+                fd_style_guide = f.read(3500)
+        except Exception:
+            fd_style_guide = ""
+
+        pi_excerpt = (pi_text or "").strip()
+        # Keep within safe prompt limits
+        pi_excerpt = pi_excerpt[:12000]
+
+        master_prompt = f"""Ești un asistent academic specializat în redactarea documentului românesc „Fișa Disciplinei”.
+
+SARCINĂ:
+Primești textul extras dintr-un „Plan de Învățământ (PI)”. Generează un **schelet complet** de „Fișa Disciplinei (FD)”,
+pre-completat cu informațiile pe care le poți deduce din PI.
+
+REGULI CRITICE:
+1) Returnează DOAR text (NU JSON, NU explicații, NU markdown code fences).
+2) Păstrează structura tipică FD: secțiunile 1-10 + semnături.
+3) Folosește tabele cu separator „|” (ca în exemplu). Dacă o valoare lipsește, pune „___”.
+4) Nu inventa date (nume cadre didactice, ore, credite) dacă nu sunt în PI. Mai bine „___”.
+5) Scrie în limba română, cu diacritice.
+
+FORMAT:
+- Folosește titluri cu „##” pentru secțiuni.
+- În secțiunea 8. Conținuturi, include tabelele 8.1 Curs și 8.2 Seminar/lab/proiect (chiar dacă rămân goale/placeholder).
+
+STIL EXEMPLU (doar ca ghid de format, nu copia conținutul):
+{fd_style_guide}
+
+DOCUMENT SURSĂ:
+PI (nume fișier): {pi_name}
+
+TEXT PI:
+{pi_excerpt}
+
+Acum generează „Fișa Disciplinei” (FD) completă ca schelet."""
+
+        try:
+            result = self.generate_text(master_prompt)
+            cleaned = (result or "").strip()
+            # Remove accidental fences if the model adds them
+            if cleaned.startswith("```"):
+                cleaned = cleaned.lstrip("`")
+            if cleaned.endswith("```"):
+                cleaned = cleaned.rstrip("`")
+            cleaned = cleaned.strip()
+
+            if not cleaned or cleaned.lower().startswith("error generating text:"):
+                return {"success": False, "error": cleaned or "Empty response", "fd_text": None}
+
+            return {"success": True, "fd_text": cleaned}
+        except Exception as e:
+            return {"success": False, "error": str(e), "fd_text": None}
 
 
 # Global instance

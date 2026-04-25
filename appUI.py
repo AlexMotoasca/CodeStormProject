@@ -2,13 +2,17 @@ import streamlit as st
 import os
 import tempfile
 import base64
-import pymupdf4llm
-from typing import List
+
 
 # Import your existing backend modules
 from gemini_backend import get_gemini_backend
 from pdf_parser import get_pdf_parser
-from queries import compare_fd_pi, save_documents_to_files, check_vague_content_and_bibliography
+from queries import (
+    compare_fd_pi,
+    save_documents_to_files,
+    check_vague_content_and_bibliography,
+    generate_fd_from_pi,
+)
 from pdf_generator import generate_pdf_from_text  # NEW IMPORT
 
 # --- Page Configuration ---
@@ -18,7 +22,7 @@ st.set_page_config(layout="wide", page_title="Academic PDF Auditor")
 # --- Helper Functions ---
 def display_pdf(file_bytes: bytes, file_name: str):
     st.download_button(
-        label=f"💾 Open {file_name} externally (if viewer below is blank)",
+        label=f"💾 Descarcă / deschide {file_name} (dacă viewer-ul e gol)",
         data=file_bytes,
         file_name=file_name,
         mime="application/pdf",
@@ -33,7 +37,7 @@ def display_pdf(file_bytes: bytes, file_name: str):
         st.warning("File is too large to render directly in the browser. Please use the download button above.")
 
 
-def parse_uploaded_file(file, role: str) -> dict:
+def parse_uploaded_file(file, role: str) -> dict | None:
     parser = get_pdf_parser()
 
     with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
@@ -78,6 +82,14 @@ if 'vague_doc' not in st.session_state:  # NEW for Mode 4
     st.session_state.vague_doc = None
 if 'vague_result' not in st.session_state:  # NEW for Mode 4
     st.session_state.vague_result = None
+if 'fdgen_doc' not in st.session_state:  # NEW for Mode 5
+    st.session_state.fdgen_doc = None
+if 'fdgen_text' not in st.session_state:  # NEW for Mode 5
+    st.session_state.fdgen_text = None
+if 'fdgen_pdf' not in st.session_state:  # NEW for Mode 5
+    st.session_state.fdgen_pdf = None
+if 'fdgen_pdf_path' not in st.session_state:  # NEW for Mode 5
+    st.session_state.fdgen_pdf_path = None
 
 # --- Sidebar Navigation ---
 st.sidebar.title("🛠️ Instrumente")
@@ -86,6 +98,7 @@ app_mode = st.sidebar.radio("Alege un flux de lucru:", [
     "2. Comparație FD vs PI",
     "3. Editare & regenerare PDF",
     "4. PI: Conținut vag & bibliografie neactualizată",
+    "5. PI ➜ Generare automată schelet FD",
 ])
 
 st.sidebar.divider()
@@ -335,3 +348,148 @@ elif app_mode == "4. PI: Conținut vag & bibliografie neactualizată":
                     st.error(res.get('error', 'Analiza a eșuat'))
             else:
                 st.info("Apasă **Generează raport** pentru a rula analiza.")
+
+
+# ==========================================
+# MODE 5: PI -> AUTO GENERATE FD SKELETON (NEW)
+# ==========================================
+elif app_mode == "5. PI ➜ Generare automată schelet FD":
+    st.title("🧩 PI ➜ Generare automată schelet Fișa Disciplinei (FD)")
+    st.caption(
+        "Flux: încarci PI → se extrage textul → Gemini generează schelet FD (pre-completat unde se poate) → îl poți edita → generezi PDF."
+    )
+
+    uploaded_file = st.file_uploader("Încarcă Planul de Învățământ (PI) (1 PDF)", type="pdf", accept_multiple_files=False)
+
+    if uploaded_file:
+        c1, c2, c3 = st.columns([0.28, 0.36, 0.36])
+        with c1:
+            if st.button("🔄 Parsează PI", type="primary", use_container_width=True):
+                with st.spinner("Se parsează PI..."):
+                    doc = parse_uploaded_file(uploaded_file, "PI")
+                    if doc:
+                        st.session_state.fdgen_doc = doc
+                        st.session_state.fdgen_text = None
+                        st.session_state.fdgen_pdf = None
+                        st.session_state.fdgen_pdf_path = None
+                        st.success("✅ PI parsat cu succes!")
+        with c2:
+            st.info("După parsare: apasă **Generează text FD**.")
+        with c3:
+            st.warning("Notă: dacă PI nu conține anumite câmpuri, ele vor apărea ca „___”.")
+
+    if st.session_state.fdgen_doc:
+        doc = st.session_state.fdgen_doc
+        st.divider()
+
+        tab_pi, tab_fd, tab_pdf = st.tabs(["📄 PI", "📝 Text FD", "📄 PDF generat"])
+
+        with tab_pi:
+            a, b = st.columns([0.55, 0.45])
+            with a:
+                st.subheader(f"📄 {doc['name']}")
+                st.caption(
+                    f"Pagini: {doc.get('pages')} · Tip: {'Scanat (OCR)' if doc.get('is_scanned') else 'Text'} · "
+                    f"Metodă: {doc.get('extraction_method')}"
+                )
+                display_pdf(doc['bytes'], doc['name'])
+            with b:
+                with st.expander("📝 Text PI extras (preview)"):
+                    pi_preview = (doc.get('full_text') or "").strip()
+                    if not pi_preview:
+                        st.warning("Nu s-a extras text din PI.")
+                    else:
+                        st.text(pi_preview[:5000] + ("..." if len(pi_preview) > 5000 else ""))
+
+        with tab_fd:
+            st.subheader("📝 Schelet Fișa Disciplinei (FD)")
+
+            if st.button("✨ Generează text FD din PI", type="primary", use_container_width=True):
+                with st.spinner("Se generează scheletul FD... (poate dura câteva secunde)"):
+                    res = generate_fd_from_pi(doc.get('full_text') or "", doc.get('name') or "PI")
+                    if res.get('success'):
+                        st.session_state.fdgen_text = res.get('fd_text')
+                        st.session_state.fdgen_pdf = None
+                        out_path = res.get('out_path')
+                        if out_path:
+                            st.success(f"✅ Text FD generat și salvat în {out_path}.")
+                        else:
+                            st.success("✅ Text FD generat.")
+                        if res.get('warning'):
+                            st.warning(res.get('warning'))
+                    else:
+                        st.error(res.get('error', 'Generarea a eșuat'))
+
+            if st.session_state.fdgen_text:
+                st.caption("Poți edita textul înainte de generarea PDF-ului.")
+                edited_fd_text = st.text_area(
+                    "Text FD (editabil)",
+                    value=st.session_state.fdgen_text,
+                    height=520,
+                )
+
+                gen_col1, gen_col2 = st.columns([0.5, 0.5])
+                with gen_col1:
+                    if st.button("🧾 Generează PDF FD", type="primary", use_container_width=True):
+                        with st.spinner("Se generează PDF-ul FD..."):
+                            try:
+                                pdf_bytes = generate_pdf_from_text(edited_fd_text)
+                                st.session_state.fdgen_pdf = pdf_bytes
+                                # keep updated text
+                                st.session_state.fdgen_text = edited_fd_text
+
+                                # Save PDF locally as a reliable fallback
+                                try:
+                                    out_pdf_path = os.path.abspath("FD_generat.pdf")
+                                    with open(out_pdf_path, "wb") as f:
+                                        f.write(pdf_bytes)
+                                    st.session_state.fdgen_pdf_path = out_pdf_path
+                                except Exception:
+                                    st.session_state.fdgen_pdf_path = None
+
+                                # also save locally
+                                try:
+                                    with open("fd_generated.txt", "w", encoding="utf-8") as f:
+                                        f.write(edited_fd_text)
+                                except Exception:
+                                    pass
+
+                                st.success("✅ PDF FD generat!")
+                            except Exception as e:
+                                st.error(f"Eroare la generarea PDF: {str(e)}")
+                with gen_col2:
+                    st.download_button(
+                        label="⬇️ Descarcă text FD (fd_generated.txt)",
+                        data=(edited_fd_text or "").encode("utf-8"),
+                        file_name="fd_generated.txt",
+                        mime="text/plain",
+                        key="dl_fdgen_text",
+                        use_container_width=True,
+                    )
+            else:
+                st.info("Apasă **Generează text FD din PI** ca să obții scheletul.")
+
+        with tab_pdf:
+            st.subheader("📄 Fișa Disciplinei (FD) - PDF")
+            if st.session_state.fdgen_pdf:
+                pdf_bytes = st.session_state.fdgen_pdf
+
+                # Download button with stable key (avoids widget key collisions on reruns)
+                st.download_button(
+                    label="⬇️ Descarcă PDF FD",
+                    data=pdf_bytes,
+                    file_name="FD_generat.pdf",
+                    mime="application/pdf",
+                    type="primary",
+                    key="dl_fdgen_pdf_primary",
+                )
+
+                # Show where we saved it on disk (fallback if browser download is blocked)
+                if st.session_state.fdgen_pdf_path:
+                    st.caption("Fallback: PDF-ul a fost salvat și local la:")
+                    st.code(st.session_state.fdgen_pdf_path)
+
+                display_pdf(pdf_bytes, "FD_generat.pdf")
+            else:
+                st.info("Generează PDF-ul din tab-ul **Text FD**.")
+

@@ -129,6 +129,115 @@ _inject_css()
 
 
 # --- Helper Functions ---
+def render_json_safely(result: dict, key_analysis: str = "analysis", key_raw: str = "raw_response"):
+    """Render JSON-like results without crashing Streamlit.
+
+    Streamlit's st.json expects a dict/list. If analysis is missing or not a dict/list,
+    we fall back to showing raw text.
+    """
+    analysis = result.get(key_analysis)
+    if isinstance(analysis, (dict, list)):
+        st.json(analysis)
+        return
+
+    raw = result.get(key_raw) or analysis
+    if raw is None:
+        st.info("Nu există rezultat JSON de afișat.")
+        return
+
+    st.text_area("Răspuns (text brut)", value=str(raw), height=450)
+
+
+def render_audit_report(analysis: dict):
+    """Render a readable audit report from the JSON structure returned by check_missing_components."""
+    status = (analysis.get("status") or "UNKNOWN").upper()
+    status_icon = "✅" if status == "VALID" else ("❌" if status == "INVALID" else "ℹ️")
+
+    math_errors = analysis.get("math_errors") or []
+    structural_errors = analysis.get("structural_errors") or []
+    missing_components = analysis.get("missing_components") or []
+    warnings = analysis.get("general_warnings") or []
+
+    st.markdown(
+        f"""
+**Status:** {status_icon} **{status}**  
+**Erori matematice:** {len(math_errors)} · **Erori structurale:** {len(structural_errors)} · **Lipsuri:** {len(missing_components)}
+"""
+    )
+
+    st.divider()
+    st.markdown("#### 🧮 Erori matematice")
+    if not math_errors:
+        st.success("Nu au fost detectate erori matematice.")
+    else:
+        for i, err in enumerate(math_errors, 1):
+            st.markdown(
+                f"""**{i}. {err.get('rule','(regulă nedefinită)')}**  
+- Așteptat: `{err.get('expected','N/A')}`  
+- Găsit: `{err.get('found','N/A')}`  
+- Detalii: {err.get('details','')}
+"""
+            )
+
+    st.divider()
+    st.markdown("#### 🧱 Probleme structurale")
+    if not structural_errors:
+        st.success("Structura documentului pare completă.")
+    else:
+        for i, err in enumerate(structural_errors, 1):
+            st.markdown(
+                f"""**{i}. {err.get('section','(secțiune nedefinită)')}**  
+- Problemă: **{err.get('issue','N/A')}**  
+- Detalii: {err.get('details','')}
+"""
+            )
+
+    st.divider()
+    st.markdown("#### 📌 Componente lipsă")
+    if not missing_components:
+        st.success("Nu par să lipsească componente obligatorii.")
+    else:
+        st.markdown("\n".join([f"- {c}" for c in missing_components]))
+
+    if warnings:
+        st.divider()
+        st.markdown("#### ⚠️ Avertismente")
+        st.markdown("\n".join([f"- {w}" for w in warnings]))
+
+
+def render_competencies_report(analysis: dict):
+    """Render a readable competencies report from the JSON structure."""
+    st.markdown(f"**Materie:** {analysis.get('nume_materie','(necunoscut)')}")
+    st.divider()
+
+    st.markdown("#### 📥 Competențe extrase")
+    extracted = analysis.get("competente_actuale_extrase") or []
+    if extracted:
+        st.markdown("\n".join([f"- {x}" for x in extracted]))
+    else:
+        st.info("Nu am putut extrage competențe clar definite din text.")
+
+    st.divider()
+    st.markdown("#### 🧠 Evaluare relevanță")
+    st.write(analysis.get("evaluare_relevanta") or "")
+
+    st.divider()
+    st.markdown("#### ✅ Recomandări profesionale")
+    prof = analysis.get("recomandari_profesionale") or []
+    if prof:
+        st.markdown("\n".join([f"- {x}" for x in prof]))
+    else:
+        st.info("Nu au fost generate recomandări profesionale.")
+
+    st.divider()
+    st.markdown("#### ✅ Recomandări transversale")
+    trans = analysis.get("recomandari_transversale") or []
+    if trans:
+        st.markdown("\n".join([f"- {x}" for x in trans]))
+    else:
+        st.info("Nu au fost generate recomandări transversale.")
+
+
 def display_pdf(file_bytes: bytes, file_name: str):
     st.download_button(
         label=f"💾 Descarcă / deschide {file_name} (dacă viewer-ul e gol)",
@@ -285,14 +394,26 @@ if app_mode == "1. Audit Fișa Disciplinei (FD)":
                 st.markdown("### ✅ Rezultat audit strict")
                 result = st.session_state.audit_result
                 if result.get('success'):
-                    st.json(result.get('analysis'))
+                    analysis = result.get("analysis")
+                    if isinstance(analysis, dict):
+                        render_audit_report(analysis)
+                        with st.expander("Detalii tehnice (JSON)"):
+                            st.json(analysis)
+                    else:
+                        render_json_safely(result)
                 else:
                     st.error(result.get('error', 'Eroare la audit'))
             elif st.session_state.competencies_result:
                 st.markdown("### ✅ Rezultat evaluare competențe")
                 result = st.session_state.competencies_result
                 if result.get('success'):
-                    st.json(result.get('analysis'))
+                    analysis = result.get("analysis")
+                    if isinstance(analysis, dict):
+                        render_competencies_report(analysis)
+                        with st.expander("Detalii tehnice (JSON)"):
+                            st.json(analysis)
+                    else:
+                        render_json_safely(result)
                 else:
                     st.error(result.get('error', 'Eroare la evaluare'))
             else:

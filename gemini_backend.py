@@ -133,11 +133,37 @@ JSON doar:"""
 
         try:
             result = self.generate_text(master_prompt)
+
+            # Clean potential markdown fences
+            cleaned = (result or "").strip()
+            if cleaned.startswith("```json"):
+                cleaned = cleaned[len("```json"):].strip()
+            if cleaned.startswith("```"):
+                cleaned = cleaned[len("```"):].strip()
+            if cleaned.endswith("```"):
+                cleaned = cleaned[:-3].strip()
+
+            # Try direct JSON parse
             try:
-                analysis_json = json.loads(result)
+                analysis_json = json.loads(cleaned)
                 return {"success": True, "analysis": analysis_json, "raw_response": result}
             except json.JSONDecodeError:
-                return {"success": True, "analysis": None, "raw_response": result, "note": "Response could not be parsed as JSON."}
+                # Fallback: extract first {...} block
+                try:
+                    start = cleaned.find("{")
+                    end = cleaned.rfind("}")
+                    if start != -1 and end != -1 and end > start:
+                        analysis_json = json.loads(cleaned[start:end + 1])
+                        return {"success": True, "analysis": analysis_json, "raw_response": result}
+                except Exception:
+                    pass
+
+                return {
+                    "success": True,
+                    "analysis": None,
+                    "raw_response": result,
+                    "note": "Response could not be parsed as JSON.",
+                }
         except Exception as e:
             return {"success": False, "error": str(e), "analysis": None}
 

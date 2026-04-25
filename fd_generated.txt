@@ -1,113 +1,114 @@
-FIŞA DISCIPLINEI
+FIŞA DISCIPLINEI 
 
-## 1. Date despre program
+## 1. Date despre program 
 
-|.|Date despre program||
+| | |
 |---|---|
-|1.1 Instituția de învățământ superior|Universitatea Transilvania din Brașov|
-|1.2 Facultatea|Matematică și Informatică|
-|1.3 Departamentul|Matematică și Informatică|
+|1.1 Instituția de învățământ superior|Universitatea Transilvania din Braşov|
+|1.2 Facultatea|Matematică şi informatică|
+|1.3 Departamentul|Matematică şi Informatică|
 |1.4 Domeniul de studii de licență|Informatică|
 |1.5 Ciclul de studii|Licență|
-|1.6 Programul de studii/ Calificarea|INFORMATICĂ / Specialist cu studii de licență în domeniul informatică|
-|1.7 Forma de învățământ|ID (la distanță)|
+|1.6 Programul de studii/ Calificarea|INFORMATICA / Licențiat în Informatică|
+|1.7 Forma de învățământ|la distanță (ID)|
 
-## 2. Date despre disciplină
+## 2. Date despre disciplină 
 
-|.|Date despre disciplină|||||||||
+| | | | | | | | | | | |
 |---|---|---|---|---|---|---|---|---|---|---|
 |2.1 Denumirea disciplinei|||Analiza matematică||||||||
-|2.2 Titularul activităților de curs|||___||||||||
-|2.3 Titularul activităților de seminar/ laborator/<br>proiect|||___||||||||
-|2.4 Anul de studiu|I|2.5 Semestrul||I|2.6 Tipul de evaluare||E|2.7 Regimul<br>disciplinei|Conținut|OF|
-||||||||||Obligativitate|DI|
+|2.2 Titularul activităților de curs||||||___|||||
+|2.3 Titularul activităților de seminar/ laborator/<br>proiect||||||___|||||
+|2.4 Anul de studiu|I|2.5 Semestrul||1|2.6 Tipul de evaluare||E|2.7 Regimul<br>disciplinei|Conținut|DF|
+||||||||||Obligativitate|I|
 
-## 3. Timpul total estimat (ore pe semestru al activităților didactice)
+## 3. Timpul total estimat (ore pe semestru al activităților didactice) 
 
-|3.1 Număr de ore pe săptămână|4|din care: 3.2 curs|3|3.3 seminar/ laborator/<br>proiect|1|
+| | | | | | | |
 |---|---|---|---|---|---|---|
-|3.4 Total ore din planul de învățământ|62|din care: 3.5 curs|42|3.6 seminar/ laborator/<br>proiect|20|
+|3.1 Număr de ore pe săptămână|3|din care: 3.2 curs|3|3.3 seminar/ laborator/<br>proiect|0|
+|3.4 Total ore din planul de învățământ|42|din care: 3.5 curs|42|3.6 seminar/ laborator/<br>proiect|0|
 |Distribuția fondului de timp||||||ore|
-|Studiul după manual, suport de curs, bibliografie şi notițe||||||55|
-|Documentare suplimentară în bibliotecă, pe platformele electronice de specialitate şi pe teren||||||___|
-|Pregătire seminare/ laboratoare/proiecte, teme, referate, portofolii şi eseuri||||||5|
-|Tutoriat||||||___|
-|Examinări||||||3|
-|Alte activități.....................................||||||___|
-|3.7 Total ore de activitate a<br>studentului|125||||||
-|3.8 Total ore pe semestru|125||||||
+|Studiul după manual, suport de curs, bibliografie şi notițe||||||50|
+|Documentare suplimentară în bibliotecă, pe platformele electronice de specialitate şi pe teren||||||0|
+|Pregătire seminare/ laboratoare/ proiecte, teme, referate, portofolii şi eseuri||||||0|
+|Tutoriat||||||0|
+|Examinări||||||5|
+|Alte activități.....................................||||||0|
+|3.7 Total ore de activitate a<br>studentului|97||||||
+|3.8 Total ore pe semestru|97||||||
 |3.9 Numărul de credite|5||||||
 
-## 4. Precondiții (acolo unde este cazul)
+## 4. Precondiții (acolo unde este cazul) 
 
-|4.1 de curriculum|___|
+| | |
 |---|---|
-|4.2 de competențe|___|
+|4.1 de curriculum|• Noțiuni fundamentale de algebră și analiză matematică studiate în ciclul preuniversitar.|
+|4.2 de competențe|• Capacitatea de a efectua calcule algebrice.<br>• Înțelegerea conceptelor de funcție, ecuație și inecuație.<br>• Abilități de bază în rezolvarea de probleme matematice.|
 
-## 5. Condiții (acolo unde este cazul)
+## 5. Condiții (acolo unde este cazul) 
 
-|5.1 de desfășurare a cursului|___|
+| | |
 |---|---|
-|5.2 de desfășurare a seminarului/ laboratorului/ proiectului|___|
+|5.1 de desfășurare a cursului|• Sală de curs dotată cu echipamente multimedia și tablă.|
+|5.2 de desfășurare a seminarului/ laboratorului/ proiectului|• Nu este cazul (disciplină cu activități exclusiv de curs și studiu individual pentru forma de învățământ ID).|
 
-## 6. Competențe specifice acumulate (conform grilei de competențe din planul de învățământ)
+## 6. Competențe specifice acumulate (conform grilei de competențe din planul de învățământ) 
 
 |Competențe profesionale|CP1. Creează softuri, dezvoltă prototipul pentru software.<br>R.Î. 1.1. Absolventul transpune o serie de cerințe într-un concept de software clar și organizat.<br>R.Î. 1.2. Absolventul creează o primă versiune incompletă sau preliminară a unei aplicații software pentru a simula unele aspecte specifice ale produsului final.<br><br>CP2. Utilizează șabloane de proiectare de software, creează diagrama de proces.<br>R.Î. 2.1. Absolventul utilizează soluții reutilizabile, întocmește cele mai bune practici în vederea îndeplinirii activităților comune de dezvoltare TIC în dezvoltarea și proiectarea de software.<br>R.Î. 2.2. Absolventul alcătuiește o diagramă care ilustrează progresul sistematic înregistrat pe parcursul unei proceduri sau al unui sistem utilizând linii de legătură și un set de simboluri.<br><br>CP3. Analizează specifica software, definește arhitectura software, proiectează sistemul informatic.<br>R.Î. 3.1. Absolventul evaluează specificațiile unui produs sau sistem software care urmează să fie dezvoltat prin identificarea cerințelor funcționale și nefuncționale, a constrângerilor și a posibilelor seturi de cazuri de utilizare care ilustrează interacțiunile dintre software și utilizatorii săi.<br>R.Î. 3.2. Absolventul creează și documentează structura produselor software, inclusiv componentele, cuplarea și interfețele. Asigură fezabilitatea, funcționalitatea și compatibilitatea cu platformele existente.<br>R.Î. 3.3. Absolventul definește arhitectura, compoziția, componentele, modulele, interfețele și datele pentru sistemele informatice integrate (hardware, software și rețea), pe baza cerințelor și a specificațiilor sistemului.|
 |---|---|
-|Competențe transversale|CT1. Aplică competențe de bază în materie de programare, operează echipamente hardware digitale.<br>R.Î. 1.1. Absolventul enumeră instrucțiuni simple pentru un sistem informatic în vederea rezolvării problemelor sau a îndeplinirii sarcinilor la un nivel de bază și cu orientări adecvate, dacă este necesar.<br>R.Î. 1.2. Absolventul utilizează echipamente precum monitor, mouse, tastatură, dispozitive de stocare, imprimante și scanere, pentru a efectua operațiuni precum conectarea, pornirea, oprirea, repornirea, salvarea fișierelor și alte operațiuni.<br><br>CT2. Utilizează software de comunicare și colaborare, efectuează căutări pe Internet.<br>R.Î. 2.1. Absolventul utilizează instrumente și tehnologii digitale simple pentru a comunica, a interacționa și a colabora cu ceilalți.<br>R.Î. 2.2. Absolventul caută date, informații și conținut, prin căutări simple în medii digitale.<br><br>CT3. Identifică probleme, soluționează probleme.<br>R.Î. 3.1. Absolventul identifică și detectează diverse probleme și aspecte și ia decizii cu privire la cea mai bună cale de urmat.<br>R.Î. 3.2. Absolventul raportează problemele în consecință atunci când este necesar.<br>R.Î. 3.3. Absolventul găsește soluții la probleme practice, operaționale sau conceptuale într-o gamă largă de contexte.<br><br>CT4. Demonstrează angajament, gândește rapid, gândește analitic, își menține concentrarea pentru perioade lungi de timp.<br>R.Î. 4.1. Absolventul demonstrează disponibilitatea de a-și asuma imediat sarcinile, chiar dacă acestea sunt dificile sau incomode.<br>R.Î. 4.2. Absolventul este în măsură să înțeleagă și să prelucreze cele mai importante aspecte ale faptelor și conexiunile acestora în mod rapid și precis.<br>R.Î. 4.3. Absolventul gândește folosind logica și raționamentul pentru a identifica punctele tari și punctele slabe ale soluțiilor alternative, concluziilor sau abordărilor problemelor.<br>R.Î. 4.4. Absolventul rămâne concentrat pe o perioadă lungă de timp pentru a judeca corect și a lua decizii adecvate.<br><br>CT5. Lucrează în echipe, organizează informații, obiecte și resurse, dă dovadă de dorință de învățare, se adaptează la schimbare, face față stresului.<br>R.Î. 5.1. Absolventul lucrează cu încredere în cadrul unui grup, fiecare făcându-și partea lui în serviciul întregului.<br>R.Î. 5.2. Absolventul înțelege sarcinile care îi revin și procesele aferente. Organizează informații, obiecte și resurse prin metode sistematice și în conformitate cu anumite standarde și asigură gestionarea sarcinii.<br>R.Î. 5.3. Absolventul dă dovadă de o atitudine pozitivă față de cerințe noi și provocatoare care pot fi satisfăcute doar prin învățare pe tot parcursul vieții.<br>R.Î. 5.4. Absolventul își schimbă atitudinea sau comportamentul pentru a se adapta modificărilor de la locul de muncă.<br>R.Î. 5.5. Absolventul gestionează provocările, perturbațiile și schimbările și se redresează în urma regreselor și a adversităților.|
+|Competențe transversale|CT1. Aplică competențe de bază în materie de programare, operează echipamente hardware digitale.<br>R.Î. 1.1. Absolventul enumeră instrucțiuni simple pentru un sistem informatic în vederea rezolvării problemelor sau a îndeplinirii sarcinilor la un nivel de bază și cu orientări adecvate, dacă este necesar.<br>R.Î. 1.2. Absolventul utilizează echipamente precum monitor, mouse, tastatură, dispozitive de stocare, imprimante și scanere, pentru a efectua operațiuni precum conectarea, pornirea, oprirea, repornirea, salvarea fișierelor și alte operațiuni.<br><br>CT2. Utilizează software de comunicare și colaborare, efectuează căutări pe Internet.<br>R.Î. 2.1. Absolventul utilizează instrumente și tehnologii digitale simple pentru a comunica, a interacționa și a colabora cu ceilalți.<br>R.Î. 2.2. Absolventul caută date, informații și conținut, prin căutări simple în medii digitale.<br><br>CT3. Identifică probleme, soluționează probleme.<br>R.Î. 3.1. Absolventul identifică și detectează diverse probleme și aspecte și ia decizii cu privire la cea mai bună cale de urmat.<br>R.Î. 3.2. Absolventul raportează problemele în consecință atunci când este necesar.<br>R.Î. 3.3. Absolventul găsește soluții la probleme practice, operaționale sau conceptuale într-o gamă largă de contexte.<br><br>CT4. Demonstrează angajament, gândește rapid, gândește analitic, își menține concentrarea pentru perioade lungi de timp.<br>R.Î. 4.1. Absolventul demonstrează disponibilitatea de a-și asuma imediat sarcinile, chiar dacă acestea sunt dificile sau incomode.<br>R.Î. 4.2. Absolventul este în măsură să înțeleagă și să prelucreze cele mai importante aspecte ale faptelor și conexiunilor acestora în mod rapid și precis.<br>R.Î. 4.3. Absolventul gândește folosind logica și raționamentul pentru a identifica punctele tari și punctele slabe ale soluțiilor alternative, concluziilor sau abordărilor problemelor.<br>R.Î. 4.4. Absolventul rămâne concentrat pe o perioadă lungă de timp pentru a judeca corect și a lua decizii adecvate.<br><br>CT5. Lucrează în echipe, organizează informații, obiecte și resurse, dă dovadă de dorință de învățare, se adaptează la schimbare, face față stresului.<br>R.Î. 5.1. Absolventul lucrează cu încredere în cadrul unui grup, fiecare făcându-și partea lui în serviciul întregului.<br>R.Î. 5.2. Absolventul înțelege sarcinile care îi revin și procesele aferente. Organizează informații, obiecte și resurse prin metode sistematice și în conformitate cu anumite standarde și asigură gestionarea sarcinii.<br>R.Î. 5.3. Absolventul dă dovadă de o atitudine pozitivă față de cerințe noi și provocatoare care pot fi satisfăcute doar prin învățare pe tot parcursul vieții.<br>R.Î. 5.4. Absolventul își schimbă atitudinea sau comportamentul pentru a se adapta modificărilor de la locul de muncă.<br>R.Î. 5.5. Absolventul gestionează provocările, perturbațiile și schimbările și se redresează în urma regreselor și a adversităților.|
 
-## 7. Obiectivele disciplinei (reieșind din grila de competențe specifice acumulate)
+## 7. Obiectivele disciplinei (reieșind din grila de competențe specifice acumulate) 
 
-|Obiectivul general al disciplinei|• Consolidarea fundamentelor matematice necesare pentru înțelegerea și abordarea conceptelor informatice avansate.<br>• Dezvoltarea capacității de abstractizare, analiză și rezolvare de probleme folosind instrumente matematice specifice analizei.|
+|Obiectivul general al disciplinei|Familiarizarea studenților cu conceptele fundamentale de analiză matematică necesare în înțelegerea și dezvoltarea algoritmilor și sistemelor informatice.|
 |---|---|
-|Obiectivele specifice|• Însușirea conceptelor de bază ale analizei matematice (șiruri, serii, limite, derivate, integrale, funcții de mai multe variabile).<br>• Dezvoltarea abilităților de aplicare a tehnicilor de calcul diferențial și integral în rezolvarea problemelor specifice informaticii.<br>• Formarea gândirii algoritmice și analitice prin abordarea problemelor de optimizare și aproximare.<br>• Capacitatea de a utiliza limbajul matematic riguros pentru a formula și argumenta soluții.|
+|Obiective specifice|• Înțelegerea și aplicarea conceptelor de limite, continuitate și derivabilitate pentru funcții reale.<br>• Calcularea integralelor nedefinite și definite, și aplicarea acestora în probleme practice.<br>• Dezvoltarea gândirii analitice și critice, esențială în rezolvarea problemelor complexe din informatică.<br>• Fundamentarea teoretică pentru studiul ulterior al disciplinelor specializate din domeniul informaticii.|
 
-## 8. Conținuturi
+## 8. Conținuturi 
 
-### 8.1 Curs
+### 8.1 Curs (42 ore) 
 
-|1.|___|
-|---|---|
-|2.|___|
-|3.|___|
-|...|___|
-
-### 8.2 Seminar/laborator/proiect
-
-|1.|___|
-|---|---|
-|2.|___|
-|3.|___|
-|...|___|
-
-## 9. Modalitatea de evaluare
-
-|. Modalitatea de evaluare|. Modalitatea de evaluare|. Pondere din nota finală|
+|Nr. Crt.|Tema|Număr de ore|
 |---|---|---|
-|9.1 Evaluare periodică (activități în timpul semestrului)<br>9.1.1 Teme de control (TC)<br>9.1.2 Activitate seminar/laborator/proiect<br>9.1.3 Teste/Colocvii parțiale|20%<br>___<br>___|
-|9.2 Examen final<br>9.2.1 Examen scris/oral|80%|
-|9.3 Condiții de obținere a notei finale|Nota finală se obține ca medie ponderată a notelor obținute la evaluarea periodică și examenul final. Este necesară obținerea unei note minime de 5 la examenul final și o medie generală de minim 5 pentru promovarea disciplinei.|
+|1|Mulțimi numerice. Principiul de inducție matematică.|3|
+|2|Șiruri de numere reale. Convergența șirurilor. Limita unui șir.|3|
+|3|Serii de numere reale. Criterii de convergență.|3|
+|4|Funcții reale de o variabilă reală. Limita unei funcții. Continuitate.|4|
+|5|Proprietăți ale funcțiilor continue. Discontinuități.|4|
+|6|Derivata unei funcții. Reguli de derivare. Derivate de ordin superior.|4|
+|7|Teoreme fundamentale ale calculului diferențial (Rolle, Lagrange, Cauchy).|4|
+|8|Formula lui Taylor. Dezvoltări Taylor. Puncte de extrem ale unei funcții.|4|
+|9|Integrala nedefinită. Proprietăți. Metode de integrare (prin părți, prin substituție).|4|
+|10|Integrala definită. Proprietăți. Formula Newton-Leibniz.|5|
+|11|Aplicații ale integralei definite (arii, volume).|4|
+|**Total ore**| |**42**|
 
-## 10. Bibliografie
+### 8.2 Seminar/ laborator/ proiect (0 ore) 
 
-|1.|___|
-|---|---|
-|2.|___|
-|3.|___|
-|...|___|
+|Nr. Crt.|Tema|Număr de ore|
+|---|---|---|
+|___|___|___|
+|**Total ore**| |**0**|
+
+## 9. Coroborarea conținuturilor disciplinei cu așteptările reprezentanților comunității epistemice, asociațiilor profesionale și angajatorilor reprezentativi din domeniul aferent programului 
+
+Conținuturile disciplinei „Analiza Matematică” sunt esențiale pentru dezvoltarea unei fundații solide în domeniul informaticii. Abilitățile de gândire analitică, rezolvare de probleme și înțelegere a conceptelor matematice abstracte, dobândite prin această disciplină, sunt direct relevante pentru specializările de programator, inginer de sistem în informatică și proiectant de sisteme informatice, așa cum sunt definite în Registrul Național al Calificărilor din Învățământul Superior (RNCIS) și confirmate de reprezentanții pieței muncii. Cunoștințele de analiză matematică stau la baza înțelegerii algoritmilor complecși, a structurilor de date, a inteligenței artificiale și a procesării semnalelor, domenii cheie în dezvoltarea software modernă. Disciplinele fundamentale precum Analiza Matematică asigură absolvenților capacitatea de a aborda provocările tehnologice actuale și viitoare, contribuind la formarea de specialiști capabili să creeze soluții IT sigure și scalabile, în conformitate cu așteptările angajatorilor din firmele IT.
+
+## 10. Evaluare 
+
+|Tip activitate|10.1 Criterii de evaluare|10.2 Metode de evaluare|10.3 Pondere din nota finală|
+|---|---|---|---|
+|10.4 Curs|• Gradul de înțelegere și asimilare a conceptelor fundamentale de analiză matematică.<br>• Capacitatea de a aplica formulele și teoremele învățate în rezolvarea de probleme.<br>• Coerența și corectitudinea raționamentului matematic.|• Examen scris (teorie și probleme).|100%|
+|10.5 Seminar/laborator/proiect|___|___|___|
+|10.6 Standard minim de performanță|Obținerea notei minim 5 (cinci) la examenul final.|
 
 Data completării: ___
 
-Titular de curs: ___
-(Nume, Prenume)
+Data avizării în Departamentul: ___
 
-Titular de seminar/laborator/proiect: ___
-(Nume, Prenume)
+Data avizării în Consiliul Facultății: ___
 
-Director de Departament: ___
-(Nume, Prenume)
-
-Director de Studii Licență: ___
-(Nume, Prenume)
-
-Data aprobării în Consiliul Facultății: ___
+|Titular curs|Titular seminar/laborator/proiect|Director departament|Director Consiliul pentru Asigurarea Calității|
+|---|---|---|---|
+|___|___|___|___|

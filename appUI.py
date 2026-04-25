@@ -19,6 +19,115 @@ from pdf_generator import generate_pdf_from_text  # NEW IMPORT
 st.set_page_config(layout="wide", page_title="Academic PDF Auditor")
 
 
+# --- UI Theme / CSS (User-friendly colors) ---
+def _inject_css():
+    st.markdown(
+        """
+        <style>
+          /* Minimalist theme - neutral + one accent */
+          :root {
+            --cs-accent: #4f46e5;         /* indigo */
+            --cs-border: rgba(148,163,184,0.35);
+            --cs-muted: rgba(100,116,139,1);
+            --cs-bg-soft: rgba(2,6,23,0.03);
+          }
+
+          /* Remove Streamlit chrome */
+          #MainMenu { visibility: hidden; }
+          footer { visibility: hidden; }
+          header { visibility: hidden; }
+
+          /* Layout */
+          .block-container {
+            padding-top: 1.1rem;
+            padding-bottom: 2rem;
+            max-width: 1200px;
+          }
+
+          /* Header card (clean) */
+          .cs-hero {
+            background: var(--cs-bg-soft);
+            border: 1px solid var(--cs-border);
+            border-left: 4px solid var(--cs-accent);
+            border-radius: 14px;
+            padding: 14px 16px;
+            margin: 0 0 14px 0;
+          }
+          .cs-hero-title { font-size: 1.22rem; font-weight: 800; margin: 0; }
+          .cs-hero-sub { margin: 6px 0 0 0; color: var(--cs-muted); }
+          .cs-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            border: 1px solid var(--cs-border);
+            background: rgba(255,255,255,0.7);
+            color: rgba(30,41,59,1);
+            margin-left: 10px;
+            vertical-align: middle;
+          }
+
+          /* Buttons - minimalist */
+          div.stButton > button {
+            border-radius: 12px !important;
+            border: 1px solid var(--cs-border) !important;
+            padding: 0.55rem 0.9rem !important;
+            font-weight: 700 !important;
+            background: transparent !important;
+          }
+          div.stButton > button[kind="primary"] {
+            background: var(--cs-accent) !important;
+            border: 1px solid var(--cs-accent) !important;
+            color: white !important;
+          }
+
+          /* Tabs */
+          button[data-baseweb="tab"] {
+            border-radius: 12px !important;
+            padding: 8px 10px !important;
+          }
+
+          /* Inputs */
+          [data-testid="stFileUploader"] {
+            border: 1px dashed var(--cs-border);
+            border-radius: 12px;
+            padding: 10px;
+          }
+
+          /* Expander */
+          details summary { font-weight: 700; }
+
+          /* Sidebar */
+          [data-testid="stSidebar"] {
+            border-right: 1px solid var(--cs-border);
+          }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def _render_hero(mode_label: str):
+    st.markdown(
+        f"""
+        <div class="cs-hero">
+          <div>
+            <span class="cs-hero-title">Academic PDF Auditor</span>
+            <span class="cs-badge">{mode_label}</span>
+          </div>
+          <p class="cs-hero-sub">
+            Încarcă PDF-urile, extrage textul și rulează audit / comparație / generare FD.
+          </p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+_inject_css()
+
+
 # --- Helper Functions ---
 def display_pdf(file_bytes: bytes, file_name: str):
     st.download_button(
@@ -102,6 +211,11 @@ app_mode = st.sidebar.radio("Alege un flux de lucru:", [
 ])
 
 st.sidebar.divider()
+st.sidebar.markdown("**Sfaturi rapide:**")
+st.sidebar.markdown(
+    "- Pentru comparație: încarcă **FD primul**, apoi **PI**.\n"
+    "- Dacă download-ul PDF nu pornește, folosește calea *Fallback*."
+)
 st.sidebar.info(
     "Încarcă fișierele în zona principală pentru a începe. "
     "Schimbarea modului va modifica inputurile necesare."
@@ -111,6 +225,7 @@ st.sidebar.info(
 # MODE 1: SINGLE DOCUMENT AUDIT (Existing Code)
 # ==========================================
 if app_mode == "1. Audit Fișa Disciplinei (FD)":
+    _render_hero("Audit FD")
     st.title("🔍 Audit Fișa Disciplinei (FD)")
     st.caption("Încarcă o Fișă a Disciplinei și rulează audit strict sau evaluarea competențelor.")
 
@@ -188,6 +303,7 @@ if app_mode == "1. Audit Fișa Disciplinei (FD)":
 # MODE 2: DOCUMENT COMPARISON (Existing Code)
 # ==========================================
 elif app_mode == "2. Comparație FD vs PI":
+    _render_hero("Comparație")
     st.title("⚖️ Comparație FD vs PI")
     st.caption("Încarcă exact 2 PDF-uri (în ordine: FD apoi PI). Se vor salva în `fd.txt` și `pi.txt`.")
 
@@ -242,6 +358,7 @@ elif app_mode == "2. Comparație FD vs PI":
 # MODE 3: EDIT & REGENERATE PDF (NEW)
 # ==========================================
 elif app_mode == "3. Editare & regenerare PDF":
+    _render_hero("Editare PDF")
     st.title("✏️ Editare & regenerare PDF")
     st.caption("Încarcă un PDF, editează textul extras și generează un PDF nou.")
 
@@ -288,6 +405,7 @@ elif app_mode == "3. Editare & regenerare PDF":
 # MODE 4: PI - VAGUE CONTENT & OUTDATED BIBLIOGRAPHY (NEW)
 # ==========================================
 elif app_mode == "4. PI: Conținut vag & bibliografie neactualizată":
+    _render_hero("PI: Vag & Bibliografie")
     st.title("⚠️ PI: Conținut vag & bibliografie neactualizată")
     st.caption(
         "Încarcă un Plan de Învățământ (PI). Vom parsa textul și vom genera un raport despre formulări vagi și bibliografie neactualizată."
@@ -354,7 +472,8 @@ elif app_mode == "4. PI: Conținut vag & bibliografie neactualizată":
 # MODE 5: PI -> AUTO GENERATE FD SKELETON (NEW)
 # ==========================================
 elif app_mode == "5. PI ➜ Generare automată schelet FD":
-    st.title("🧩 PI ➜ Generare automată schelet Fișa Disciplinei (FD)")
+    _render_hero("PI ➜ FD")
+    st.title("🧩 PI ➜ Generare automată schelet Fișa Disciplinei")
     st.caption(
         "Flux: încarci PI → se extrage textul → Gemini generează schelet FD (pre-completat unde se poate) → îl poți edita → generezi PDF."
     )

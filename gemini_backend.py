@@ -153,7 +153,7 @@ CERINȚE DE BAZĂ PENTRU ANALIZĂ:
 1. Identifică numele disciplinei/materiei.
 2. Extrage competențele profesionale și transversale actuale (sau constată lipsa lor).
 3. Evaluează relevanța: Sunt aceste competențe potrivite pentru numele și conținutul materiei?
-4. Formulaază recomandări: Propune 2-3 competențe profesionale NOI sau îmbunătățite și 1-2 competențe transversale care s-ar potrivi mai bine cu materia, folosind verbe de acțiune clare (ex: a proiecta, a analiza, a implementa).
+4. Formulază recomandări: Propune 2-3 competențe profesionale NOI sau îmbunătățite și 1-2 competențe transversale care s-ar potrivi mai bine cu materia, folosind verbe de acțiune clare (ex: a proiecta, a analiza, a implementa).
 
 Returnează DOAR un obiect JSON valid, respectând strict această structură:
 {{
@@ -193,6 +193,73 @@ JSON doar:"""
             except json.JSONDecodeError:
                 return {"success": True, "analysis": None, "raw_response": result,
                         "note": "Response could not be parsed as JSON."}
+        except Exception as e:
+            return {"success": False, "error": str(e), "analysis": None}
+
+    def check_vague_content_and_bibliography(self, pdf_text: str, pdf_name: str) -> dict:
+        """
+        Check for vague content and outdated bibliography in a Planul de Învățământ (PI).
+        Returns analysis in formatted text (not JSON).
+        """
+        master_prompt = f"""Ești un expert în calitatea curriculumului și bibliografie academică.
+Analizează "Planul de Învățământ" (PI) de mai jos și identifică:
+
+1. CONȚINUT VAG:
+   - Descrieri prea generale sau nespecifice ale obiectivelor
+   - Competențe formulate vag sau imprecis
+   - Descrieri de conținut care nu sunt concrete
+   - Metodologii de predare neclare
+   - Criterii de evaluare ambigue
+   
+2. BIBLIOGRAFIE NEACTUALIZATĂ:
+   - Referințe mai vechi de 10 ani (cu excepția clasicilor consacrați)
+   - Lipsă de surse recente (ultimii 3-5 ani)
+   - Bibliografie incompletă (mai puțin de 5 surse pentru o disciplină)
+   - Lipsă de resurse digitale/online
+   - Lipsă de literatură actuală în domeniu
+
+FORMAT RĂSPUNS - Scrie un raport CLAR ȘI CITIBIL:
+
+📋 RAPORT ANALIZĂ - CONȚINUT VAG ȘI BIBLIOGRAFIE
+==================================================
+
+📄 Document analizat: {pdf_name}
+
+---
+
+❌ CONȚINUT VAG IDENTIFICAT:
+• Pentru fiecare problemă găsită, scrie:
+  - Locație în document (secțiune/cuvinte cheie)
+  - Descrierea problemei
+  - De ce este problematic
+  - Sugestie de îmbunătățire
+
+---
+
+📚 BIBLIOGRAFIE - STATUS:
+• Total surse identificate: [X]
+• Surse din ultimii 5 ani: [Y]
+• Surse mai vechi de 10 ani: [Z]
+• Resurse digitale: [W]
+
+---
+
+⚠️ PROBLEME DE BIBLIOGRAFIE:
+• Lipsuri și recomandări specifice
+• Domenii care necesită referințe mai noi
+• Tipuri de surse care lipsesc
+
+---
+
+RAPORT DETALIAT:
+
+PI TEXT: {pdf_text[:6000]}
+
+Scrie raportul în format text clar, ușor de citit. NU FOLOSI JSON."""
+
+        try:
+            result = self.generate_text(master_prompt)
+            return {"success": True, "analysis": result}
         except Exception as e:
             return {"success": False, "error": str(e), "analysis": None}
 

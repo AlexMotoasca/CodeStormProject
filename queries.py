@@ -150,3 +150,24 @@ def save_documents_to_files(fd_text: str, pi_text: str, fd_path: str = "fd.txt",
             "error": str(e)
         }
 
+
+def check_vague_content_and_bibliography(pi_text: str, pi_name: str) -> dict:
+    """
+    Check for vague content and outdated bibliography in a Planul de Învățământ (PI).
+    
+    Args:
+        pi_text: Text from Plan Învățământ document
+        pi_name: Name of the PI document
+    
+    Returns:
+        Analysis as formatted text (not JSON)
+    """
+    try:
+        result = gemini_backend.check_vague_content_and_bibliography(pi_text, pi_name)
+        return result
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e),
+            "analysis": None
+        }

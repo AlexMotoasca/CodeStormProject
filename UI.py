@@ -11,7 +11,7 @@ from pdf_db_service import (
     regenerate_pdf_with_layout,
     write_preview_pdf,
 )
-from queries import compare_fd_pi, save_documents_to_files
+from queries import compare_fd_pi, save_documents_to_files, check_vague_content_and_bibliography
 
 # Store uploaded PDFs in session
 pdf_documents: List[dict] = []
@@ -26,10 +26,11 @@ async def start():
     """Initialize the chat session and display the PDF import interface."""
     await cl.Message(
         content=(
-            "Welcome! Upload **exactly 2 PDFs** in one message:\n"
-            "1) Fișa Disciplinei (FD)\n"
-            "2) Planul de învățământ (PI)\n\n"
-            "After upload, I’ll parse both, save them to `fd.txt` and `pi.txt`, and you can run the compare."
+            "🎓 **Bun venit la Sistem de Validare Curriculumi!**\n\n"
+            "Încarcă **exact 2 documente PDF** în același mesaj:\n"
+            "1️⃣ **Fișa Disciplinei (FD)**\n"
+            "2️⃣ **Planul de Învățământ (PI)**\n\n"
+            "După încărcare, sistemul va parse ambele documente și îți va oferi opțiuni de validare și analiză."
         )
     ).send()
 
@@ -44,13 +45,13 @@ async def handle_message(message: cl.Message):
 
     # If no file elements, ask user to upload
     if not message.elements:
-        await cl.Message(content="Please upload 2 PDF documents (FD then PI) in one message.").send()
+        await cl.Message(content="📁 Te rog, încarcă 2 documente PDF (FD apoi PI) în același mesaj.").send()
         return
 
     pdf_files = [el for el in message.elements if _is_pdf_element(el)]
 
     if len(pdf_files) != 2:
-        await cl.Message(content="❌ Please upload **exactly 2** PDF documents in one message (FD first, PI second)." ).send()
+        await cl.Message(content="❌ Te rog, încarcă **exact 2** documente PDF în același mesaj (mai întâi FD, apoi PI)." ).send()
         return
 
     # FD is first, PI is second (as requested)
@@ -105,38 +106,48 @@ async def handle_message(message: cl.Message):
         else:
             await cl.Message(content=f"⚠️ Could not save fd.txt/pi.txt: {save_res.get('error')}").send()
 
-        # Buttons: verify each + compare
+        # Buttons: verify each + compare (with Romanian labels)
         actions = [
             cl.Action(
                 name="verify_parser",
                 value=fd_doc["name"],
-                description="Re-parse FD and write output.txt",
+                description="🔍 Verifică Fișa Disciplinei",
                 payload={"pdf_name": fd_doc["name"]},
             ),
             cl.Action(
                 name="verify_parser",
                 value=pi_doc["name"],
-                description="Re-parse PI and write output.txt",
+                description="🔍 Verifică Planul de Învățământ",
                 payload={"pdf_name": pi_doc["name"]},
             ),
             cl.Action(
                 name="compare_fd_pi",
                 value="compare",
-                description="Compare FD with PI",
+                description="📊 Compară FD cu PI",
                 payload={"doc1_idx": 0, "doc2_idx": 1},
             ),
             cl.Action(
                 name="check_components",
                 value=fd_doc["name"],
-                description="Check FD for missing components",
+                description="✅ Validare componente FD",
                 payload={"pdf_name": fd_doc["name"]},
+            ),
+            cl.Action(
+                name="check_vague_content",
+                value=pi_doc["name"],
+                description="⚠️ Detectează conținut vag și bibliografie neactualizată",
+                payload={"pdf_name": pi_doc["name"]},
             ),
         ]
 
         await cl.Message(
             content=(
-                "🔄 Ready. Use **Compare FD with PI** to run Gemini comparison.\n"
-                "(FD = first uploaded PDF, PI = second uploaded PDF)"
+                "✅ **Gata!** Alege una din opțiunile de validare de mai jos:\n\n"
+                "- **Verifică Fișa Disciplinei**: Parse și analiză FD\n"
+                "- **Verifică Planul de Învățământ**: Parse și analiză PI\n"
+                "- **Compară FD cu PI**: Raport detaliat de inconsistențe\n"
+                "- **Validare componente FD**: Verificare matematică și structură\n"
+                "- **Detectează conținut vag**: Analiză bibliografie și claritate"
             ),
             actions=actions,
         ).send()
@@ -479,6 +490,52 @@ async def compare_fd_pi_action(action: cl.Action):
         import traceback
         traceback.print_exc()
         await cl.Message(content=f"❌ Error: {str(e)}").send()
+
+
+@cl.action_callback("check_vague_content")
+async def check_vague_content_action(action: cl.Action):
+    """Handle vague content and outdated bibliography check button click."""
+    try:
+        # Get pdf_name from payload
+        pdf_name = action.payload.get("pdf_name") if action.payload else None
+
+        if not pdf_name:
+            await cl.Message(content="❌ Eroare: Numele PDF-ului nu a fost găsit").send()
+            return
+
+        # Find the matching PDF (should be the PI document)
+        matching_pdf = next((pdf for pdf in pdf_documents if pdf['name'] == pdf_name), None)
+
+        if not matching_pdf:
+            await cl.Message(content=f"❌ PDF nu a fost găsit: {pdf_name}").send()
+            return
+
+        if not matching_pdf['full_text']:
+            await cl.Message(content="❌ Nu este disponibil text pentru analiză").send()
+            return
+
+        # Show loading message
+        await cl.Message(content="🔍 Se analizează conținutul vag și bibliografia...").send()
+
+        # Check for vague content and outdated bibliography
+        result = check_vague_content_and_bibliography(matching_pdf['full_text'], pdf_name)
+
+        if result.get('success'):
+            analysis = result.get('analysis')
+            
+            # Display the formatted text response directly
+            msg = f"📋 **RAPORT - ANALIZA CONȚINUT VAG ȘI BIBLIOGRAFIE**\n\n**Fișier:** {pdf_name}\n\n{analysis}"
+            await cl.Message(content=msg).send()
+        else:
+            await cl.Message(
+                content=f"❌ Analiza a eșuat: {result.get('error', 'Eroare necunoscută')}"
+            ).send()
+
+    except Exception as e:
+        print(f"ERROR in check_vague_content_action: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        await cl.Message(content=f"❌ Eroare: {str(e)}").send()
 
 
 def get_loaded_pdfs() -> List[dict]:
